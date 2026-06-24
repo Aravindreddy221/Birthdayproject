@@ -60,7 +60,6 @@
   .tl-cake{ position:absolute; right:-10px; top:50%; transform:translateY(-54%); font-size:clamp(24px,5vw,32px); }
   .tl-cap{ margin-top:14px; font-family:var(--fred); font-weight:500; font-size:clamp(.85rem,2.2vw,1rem); color:var(--plum-2); }
 
-  /* gifts row */
   .gifts-wrap{ margin-top:clamp(10px,2vh,18px); display:flex; flex-direction:column; align-items:center; gap:16px; }
   .gifts-title{ margin:0; font-family:var(--fred); font-weight:500; font-size:clamp(.95rem,2.5vw,1.15rem); color:var(--plum-2); }
   .gifts{ display:flex; gap:clamp(14px,4vw,30px); flex-wrap:wrap; justify-content:center; }
@@ -75,7 +74,6 @@
   @keyframes giftbob{ 0%,100%{ transform:translateY(0) rotate(-3deg) } 50%{ transform:translateY(-12px) rotate(3deg) } }
   @keyframes glow{ 0%,100%{ transform:scale(.9); opacity:.55 } 50%{ transform:scale(1.16); opacity:1 } }
 
-  /* reveal */
   .reveal{ display:none; flex-direction:column; align-items:center; gap:clamp(16px,3vh,24px); width:100%; }
   .reveal.show{ display:flex; }
   .reveal h1{ margin:0; font-family:var(--fred); font-weight:700; font-size:clamp(1.8rem,6vw,3rem); line-height:1.1; color:var(--plum); }
@@ -91,12 +89,19 @@
   .sx-wordmark{ font-family:var(--nun); font-weight:800; text-transform:uppercase; letter-spacing:.2em; font-size:clamp(1.4rem,5vw,1.9rem); color:var(--space); line-height:1; }
   .sx-ticker{ margin-top:8px; font-family:var(--nun); font-weight:700; font-size:.76rem; letter-spacing:.14em; color:#9aa0ab; }
   .stock-price{ margin-top:18px; font-family:var(--fred); font-weight:700; font-size:clamp(2.4rem,10vw,3.6rem); line-height:1; color:#14161F; font-variant-numeric:tabular-nums; }
-  .stock-change{ margin-top:8px; font-family:var(--nun); font-weight:800; font-size:clamp(.95rem,3vw,1.15rem); font-variant-numeric:tabular-nums; }
+  .stock-change{ margin-top:8px; font-family:var(--nun); font-weight:800; font-size:clamp(.95rem,3vw,1.15rem); font-variant-numeric:tabular-nums; min-height:1.2em; }
   .stock-change.up{ color:var(--up); } .stock-change.down{ color:var(--down); }
-  .stock-meta{ margin-top:12px; font-family:var(--nun); font-weight:600; font-size:.76rem; color:#9aa0ab; }
-  .stock-refresh{ margin-top:16px; font-family:var(--fred); font-weight:600; font-size:14px; color:var(--space); background:rgba(11,26,59,.07); border:1px solid rgba(11,26,59,.18); border-radius:999px; padding:9px 20px; cursor:pointer; user-select:none; touch-action:manipulation; transition:transform .25s var(--bounce), background .25s var(--ease); }
-  .stock-refresh:hover{ transform:scale(1.04); background:rgba(11,26,59,.12); }
-  .stock-refresh.spin{ pointer-events:none; opacity:.6; }
+  .stock-meta{ margin-top:12px; font-family:var(--nun); font-weight:600; font-size:.78rem; color:#9aa0ab; }
+  .stock-live{ display:inline-flex; align-items:center; gap:6px; }
+  .live-dot{ width:7px; height:7px; border-radius:50%; background:var(--up); animation:lpulse 1.6s ease-in-out infinite; }
+  @keyframes lpulse{ 0%,100%{ opacity:1; transform:scale(1) } 50%{ opacity:.35; transform:scale(.8) } }
+  .stock-refresh{ margin-top:16px; display:inline-flex; align-items:center; gap:8px; font-family:var(--fred); font-weight:600; font-size:14.5px; color:#fff; background:var(--space); border:none; border-radius:999px; padding:11px 24px; cursor:pointer; user-select:none; touch-action:manipulation; box-shadow:0 10px 22px -10px rgba(11,26,59,.6); transition:transform .22s var(--bounce), filter .22s ease; }
+  .stock-refresh:hover{ transform:translateY(-2px) scale(1.04); filter:brightness(1.08); }
+  .stock-refresh:active{ transform:scale(.97); }
+  .stock-refresh .ico{ display:inline-block; font-size:16px; }
+  .stock-refresh.spin .ico{ animation:spin360 .7s linear infinite; }
+  @keyframes spin360{ to{ transform:rotate(360deg) } }
+  .stock-auto{ margin-top:8px; font-family:var(--nun); font-weight:600; font-size:.72rem; color:#b3b8c2; }
 
   /* voucher card */
   .voucher{ width:100%; max-width:400px; background:var(--white); border-radius:28px; padding:clamp(26px,5vw,34px); box-shadow:0 22px 50px -20px rgba(0,0,0,.28), 0 6px 18px -10px rgba(0,0,0,.12); border-top:6px solid var(--brand); }
@@ -111,8 +116,9 @@
 
   .reveal .line{ margin:0; font-family:var(--fred); font-weight:500; font-size:clamp(1rem,2.6vw,1.18rem); color:var(--plum-2); }
 
-  .pin{ opacity:0; transform:translateY(18px) scale(.96); animation:popin .7s var(--bounce) forwards; }
+  .pin{ opacity:0; transform:translateY(18px) scale(.96); animation:popin2 .7s var(--bounce) forwards; }
   .p1{ animation-delay:.05s } .p2{ animation-delay:.15s } .p3{ animation-delay:.26s } .p4{ animation-delay:.4s } .p5{ animation-delay:.54s } .p6{ animation-delay:.66s }
+  @keyframes popin2{ to{ opacity:1; transform:none } }
 
   :focus-visible{ outline:3px solid var(--pink); outline-offset:3px; border-radius:14px; }
   @media (max-width:560px){ .countdown{ grid-template-columns:repeat(2,1fr); max-width:340px; } }
@@ -172,7 +178,8 @@
         <div class="stock-price" id="stPrice">—</div>
         <div class="stock-change" id="stChange"></div>
         <div class="stock-meta" id="stMeta">loading…</div>
-        <button class="stock-refresh" id="stRefresh">↻ Refresh price</button>
+        <button class="stock-refresh" id="stRefresh"><span class="ico">↻</span> Refresh</button>
+        <div class="stock-auto">auto-updates every 2 seconds</div>
       </div>
       <p class="line">A little SpaceX stock, just for you 🚀</p>
     </div>
@@ -221,7 +228,6 @@
     zomatoCode: "MOUNIKA500",
     bmsCode:    "MOUNIKA500"
   };
-  // last-known SPCX price, used only if the live fetch is unavailable
   const STOCK_FALLBACK = { price: 155.18, prev: 156.11, asof: "Jun 24, 2026" };
   /* ───────────────────────────────────────────────────────── */
 
@@ -278,7 +284,6 @@
   // ── gifts: open / back ──
   const reveal = get('reveal'), counting = get('counting'), floaties = get('floaties');
   const views = document.querySelectorAll('.gift-view');
-  let stockStarted = false;
 
   function openGift(which, btn){
     counting.style.display = 'none';
@@ -287,19 +292,16 @@
     views.forEach(v => v.classList.toggle('show', v.dataset.view === which));
     if (btn) btn.classList.add('opened');
     document.title = '🎁 Happy Birthday, ' + CONFIG.name + '!';
-    if (which === 'spacex'){
-      loadStock();
-      if (!stockStarted){ stockStarted = true; setInterval(loadStock, 60000); }
-    }
+    if (which === 'spacex') startStockPoll(); else stopStockPoll();
   }
   function backToGifts(){
     reveal.classList.remove('show');
     counting.style.display = 'contents';
     floaties.style.opacity = '';
+    stopStockPoll();
     document.title = CONFIG.name + ' · turning ' + CONFIG.age + ' 🎂';
   }
-  document.querySelectorAll('.gift').forEach(g =>
-    g.addEventListener('click', () => openGift(g.dataset.gift, g)));
+  document.querySelectorAll('.gift').forEach(g => g.addEventListener('click', () => openGift(g.dataset.gift, g)));
   get('backBtn').addEventListener('click', backToGifts);
 
   // ── copy coupon code ──
@@ -313,15 +315,29 @@
     });
   });
   function fallbackCopy(text, done){
-    const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    const ta = document.createElement('textarea'); ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
     document.body.appendChild(ta); ta.select();
     try{ document.execCommand('copy'); done(); }catch(e){}
     document.body.removeChild(ta);
   }
 
-  // ── live SPCX quote (client-side, with fallback) ──
+  // ── live SPCX quote: fast via /api/quote, with fallbacks ──
   const stPrice = get('stPrice'), stChange = get('stChange'), stMeta = get('stMeta'), stRefresh = get('stRefresh');
+  let stockLoading = false, stockPoll = null;
+
+  function fetchT(url, opts, ms){
+    const c = new AbortController();
+    const id = setTimeout(() => c.abort(), ms || 4000);
+    return fetch(url, Object.assign({ signal:c.signal }, opts || {})).finally(() => clearTimeout(id));
+  }
+
   async function getQuote(){
+    // 1) fast path: our own serverless function (if deployed)
+    try{
+      const r = await fetchT('/api/quote?ticker=' + CONFIG.ticker, { cache:'no-store' }, 3000);
+      if (r.ok){ const d = await r.json(); if (typeof d.price === 'number') return { price:d.price, prev:d.prev, live:true }; }
+    }catch(e){}
+    // 2) fallback: public proxy → Yahoo
     const y = 'https://query1.finance.yahoo.com/v8/finance/chart/' + CONFIG.ticker + '?interval=1d&range=1d';
     const proxies = [
       'https://api.allorigins.win/raw?url=' + encodeURIComponent(y),
@@ -329,7 +345,7 @@
     ];
     for (const u of proxies){
       try{
-        const res = await fetch(u, { cache:'no-store' });
+        const res = await fetchT(u, { cache:'no-store' }, 4000);
         if (!res.ok) continue;
         const j = await res.json();
         const m = j.chart.result[0].meta;
@@ -338,22 +354,36 @@
         if (typeof price === 'number') return { price, prev, live:true };
       }catch(e){}
     }
+    // 3) static fallback
     return { price: STOCK_FALLBACK.price, prev: STOCK_FALLBACK.prev, live:false };
   }
+
   function renderQuote(d){
     const change = d.price - d.prev, pct = d.prev ? (change / d.prev * 100) : 0, up = change >= 0;
     stPrice.textContent = '$' + d.price.toFixed(2);
     stChange.textContent = (up ? '▲ +' : '▼ ') + change.toFixed(2) + '  (' + (up ? '+' : '') + pct.toFixed(2) + '%)';
     stChange.className = 'stock-change ' + (up ? 'up' : 'down');
-    stMeta.textContent = d.live
-      ? 'Live · updated ' + new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) + ' · may be delayed'
+    stMeta.innerHTML = d.live
+      ? '<span class="stock-live"><span class="live-dot"></span>Live · ' + new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' }) + '</span>'
       : '≈ as of ' + STOCK_FALLBACK.asof + ' · live data unavailable right now';
   }
+
   async function loadStock(){
-    stRefresh.classList.add('spin'); stMeta.textContent = 'fetching live price…';
-    renderQuote(await getQuote());
-    stRefresh.classList.remove('spin');
+    if (stockLoading) return;            // avoid overlapping requests
+    stockLoading = true;
+    stRefresh.classList.add('spin');
+    try{ renderQuote(await getQuote()); }
+    catch(e){}
+    finally{ stockLoading = false; stRefresh.classList.remove('spin'); }
   }
+  function startStockPoll(){
+    if (stockPoll) return;
+    loadStock();
+    stockPoll = setInterval(loadStock, 2000);   // refresh every 2 seconds
+  }
+  function stopStockPoll(){ if (stockPoll){ clearInterval(stockPoll); stockPoll = null; } }
+
+  // refresh button is always clickable
   stRefresh.addEventListener('click', loadStock);
 </script>
 </body>
