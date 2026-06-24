@@ -68,9 +68,9 @@
   .gift::after{ content:""; position:absolute; inset:6%; border-radius:50%; background:radial-gradient(circle,rgba(255,92,168,.4),transparent 62%); z-index:-1; animation:glow 1.8s ease-in-out infinite; }
   .gift:hover{ transform:scale(1.07) rotate(-3deg); }
   .gift:active{ transform:scale(.94); }
-  .gift.opened{ animation:none; filter:grayscale(.3) opacity(.7); }
-  .gift.opened::after{ display:none; }
-  .gift.opened::before{ content:"✓"; position:absolute; top:2px; right:2px; width:22px; height:22px; border-radius:50%; background:var(--up); color:#fff; font-family:var(--nun); font-weight:800; font-size:13px; display:grid; place-items:center; }
+  .gift.opened{ animation:none; }
+  .gift.opened::after{ background:radial-gradient(circle,rgba(22,163,74,.5),transparent 62%); opacity:1; animation:none; }
+  .gift.opened::before{ content:"✓"; position:absolute; top:0; right:0; width:24px; height:24px; border-radius:50%; background:var(--up); color:#fff; font-family:var(--nun); font-weight:800; font-size:13px; display:grid; place-items:center; box-shadow:0 4px 10px -2px rgba(22,163,74,.6); }
   @keyframes giftbob{ 0%,100%{ transform:translateY(0) rotate(-3deg) } 50%{ transform:translateY(-12px) rotate(3deg) } }
   @keyframes glow{ 0%,100%{ transform:scale(.9); opacity:.55 } 50%{ transform:scale(1.16); opacity:1 } }
 
@@ -291,6 +291,7 @@
     reveal.classList.add('show');
     views.forEach(v => v.classList.toggle('show', v.dataset.view === which));
     if (btn) btn.classList.add('opened');
+    persistOpen(which);
     document.title = '🎁 Happy Birthday, ' + CONFIG.name + '!';
     if (which === 'spacex') startStockPoll(); else stopStockPoll();
   }
@@ -303,6 +304,22 @@
   }
   document.querySelectorAll('.gift').forEach(g => g.addEventListener('click', () => openGift(g.dataset.gift, g)));
   get('backBtn').addEventListener('click', backToGifts);
+
+  // ── persist "opened" state in the database (Vercel KV / Upstash) ──
+  function markOpened(which){
+    const g = document.querySelector('.gift[data-gift="' + which + '"]');
+    if (g) g.classList.add('opened');
+  }
+  function persistOpen(which){
+    fetch('/api/gifts?gift=' + encodeURIComponent(which), { method:'POST', cache:'no-store' }).catch(() => {});
+  }
+  async function loadOpened(){
+    try{
+      const r = await fetch('/api/gifts', { cache:'no-store' });
+      if (r.ok){ const d = await r.json(); (d.opened || []).forEach(markOpened); }
+    }catch(e){}
+  }
+  loadOpened();   // populate the green ✓ marks from the database on load
 
   // ── copy coupon code ──
   document.querySelectorAll('.copy-btn').forEach(btn => {
