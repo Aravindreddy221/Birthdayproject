@@ -1,16 +1,23 @@
 // api/gifts.js — persists which gifts have been opened, in Vercel KV (Upstash Redis).
 // No npm packages needed — talks to Upstash over its REST API.
 //
-// GET  /api/gifts            -> { opened: ["spacex", ...], db: true }
-// POST /api/gifts?gift=spacex -> marks a gift opened, returns updated { opened }
-//
-// Vercel injects the env vars below when you connect a KV / Upstash database
-// to the project (Storage tab). Works with either naming scheme.
+// GET  /api/gifts             -> { opened: [...], db: true, hasUrl, hasToken }
+// POST /api/gifts?gift=spacex  -> marks a gift opened, returns updated { opened }
 
+// Auto-detect the DB credentials Vercel injects, across naming variants
+// (KV_REST_API_URL / UPSTASH_REDIS_REST_URL / prefixed marketplace names, etc.)
+function pickEnv(test) {
+  for (const k of Object.keys(process.env)) {
+    if (test(k) && process.env[k]) return process.env[k];
+  }
+  return undefined;
+}
 const REDIS_URL =
-  process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
+  pickEnv(function (k) { return /(KV|UPSTASH|REDIS).*REST.*URL$/i.test(k); }) ||
+  pickEnv(function (k) { return /REST_API_URL$/i.test(k); });
 const REDIS_TOKEN =
-  process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+  pickEnv(function (k) { return /(KV|UPSTASH|REDIS).*REST.*TOKEN$/i.test(k) && !/READ.?ONLY/i.test(k); }) ||
+  pickEnv(function (k) { return /REST_API_TOKEN$/i.test(k) && !/READ.?ONLY/i.test(k); });
 
 const KEY = 'gift_opened';
 const VALID = ['spacex', 'zomato', 'bms'];
@@ -32,22 +39,20 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Cache-Control', 'no-store');
 
-  // If no database is connected yet, fail soft so the page still works.
-  if (!REDIS_URL || !REDIS_TOKEN) {
-    return res.status(200).json({ opened: [], db: false });
+  const hasUrl = !!REDIS_URL, hasToken = !!REDIS_TOKEN;
+  if (!hasUrl || !hasToken) {
+    return res.status(200).json({ opened: [], db: false, hasUrl: hasUrl, hasToken: hasToken });
   }
 
   try {
     if (req.method === 'POST') {
       const gift = String((req.query && req.query.gift) || '')
-        .toLowerCase()
-        .replace(/[^a-z]/g, '')
-        .slice(0, 20);
-      if (VALID.includes(gift)) await redis(['SADD', KEY, gift]); // permanent
+        .toLowerCase().replace(/[^a-z]/g, '').slice(0, 20);
+      if (VALID.indexOf(gift) !== -1) await redis(['SADD', KEY, gift]); // permanent
     }
     const opened = (await redis(['SMEMBERS', KEY])) || [];
-    return res.status(200).json({ opened, db: true });
+    return res.status(200).json({ opened: opened, db: true, hasUrl: hasUrl, hasToken: hasToken });
   } catch (e) {
-    return res.status(200).json({ opened: [], db: false, error: 'redis_failed' });
+    return res.status(200).json({ opened: [], db: false, hasUrl: hasUrl, hasToken: hasToken, error: String((e && e.message) || e) });
   }
 };
