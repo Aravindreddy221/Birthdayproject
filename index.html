@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Happiest Birthday, Mounika 🎂</title>
-<meta name="description" content="Happiest Birthday Mounika — with surprise gifts 🎁" />
+<title>Happiest Birthday, M0unika 🎂</title>
+<meta name="description" content="Happiest Birthday M0unika — with surprise gifts 🎁" />
 <meta name="theme-color" content="#FFE3F1" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,7 +16,7 @@
     --plum:#5B3470; --plum-2:#9C77AE;
     --pink:#FF5CA8; --pink-2:#FF8AC0;
     --white:#FFFFFF;
-    --space:#0B1A3B; --swiggy:#FC8019; --bms:#F84464;
+    --space:#0B1A3B; --zepto:#5B0EAB; --bms:#F84464;
     --up:#16A34A; --down:#E0245E;
     --bounce:cubic-bezier(.34,1.56,.64,1);
     --ease:cubic-bezier(.22,.9,.3,1);
@@ -153,14 +153,14 @@
   <!-- COUNTDOWN + GIFTS -->
   <div id="counting" style="display:contents">
     <p class="hi pin p1">Happiest Birthday 🎉🎂</p>
-    <h1 class="name pin p2"><span data-name>Mounika</span> <span class="wig">🌸</span></h1>
+    <h1 class="name pin p2"><span data-name>M0unika</span> <span class="wig">🌸</span></h1>
     <p class="sub pin p3">You're <span data-age>28</span> today — let's celebrate! 🎉🎈</p>
 
     <div class="gifts-wrap pin p6">
       <p class="gifts-title">Three little gifts — tap to open! 🎁</p>
       <div class="gifts">
         <button class="gift" data-gift="spacex" aria-label="Open gift 1">🎁</button>
-        <button class="gift" data-gift="swiggy" aria-label="Open gift 2">🎁</button>
+        <button class="gift" data-gift="zepto" aria-label="Open gift 2">🎁</button>
         <button class="gift" data-gift="bms" aria-label="Open gift 3">🎁</button>
       </div>
     </div>
@@ -168,7 +168,7 @@
 
   <!-- REVEAL -->
   <div class="reveal" id="reveal">
-    <h1>Happy Birthday, <span class="hl" data-name>Mounika</span> 🎉</h1>
+    <h1>Happy Birthday, <span class="hl" data-name>M0unika</span> 🎉</h1>
 
     <!-- SpaceX -->
     <div class="gift-view" data-view="spacex">
@@ -196,17 +196,17 @@
       <p class="line">A little SpaceX stock, just for you 🚀</p>
     </div>
 
-    <!-- Swiggy -->
-    <div class="gift-view" data-view="swiggy">
-      <div class="voucher" style="--brand:var(--swiggy)">
-        <div class="voucher-brand">Swiggy</div>
+    <!-- Zepto -->
+    <div class="gift-view" data-view="zepto">
+      <div class="voucher" style="--brand:var(--zepto)">
+        <div class="voucher-brand">Zepto</div>
         <div class="voucher-value" data-coupon-value>₹500</div>
-        <div class="voucher-sub">Food Gift Voucher</div>
-        <div class="voucher-code"><span id="sCode">MOUNIKA500</span></div>
-        <button class="copy-btn" data-copy="sCode">Copy code</button>
-        <div class="voucher-note">Order yourself a feast, on me 🍽️</div>
+        <div class="voucher-sub">Grocery Gift Voucher</div>
+        <div class="voucher-code"><span id="zCode">MOUNIKA500</span></div>
+        <button class="copy-btn" data-copy="zCode">Copy code</button>
+        <div class="voucher-note">Stock up on treats, on me 🛒</div>
       </div>
-      <p class="line">Something tasty for the birthday girl 🍕</p>
+      <p class="line">A little something for the birthday girl 🛍️</p>
     </div>
 
     <!-- BookMyShow -->
@@ -231,13 +231,13 @@
      Edit these to reuse. Time is locked to India (IST).
      ───────────────────────────────────────────────────────── */
   const CONFIG = {
-    name:  "Mounika",
+    name:  "M0unika",
     age:   28,
     year:  2026, month: 6, day: 29,   // 1–12 (June = 6)
     windowDays: 30,
     ticker: "SPCX",
     couponValue: 500,
-    swiggyCode: "MOUNIKA500",
+    zeptoCode: "MOUNIKA500",
     bmsCode:    "8H4FDCS4ZC"
   };
   const STOCK_FALLBACK = { price: 155.18, prev: 156.11, asof: "Jun 24, 2026" };
@@ -253,7 +253,7 @@
   document.querySelectorAll('[data-day]').forEach(e =>
     e.textContent = target.toLocaleDateString('en-IN', { timeZone:'Asia/Kolkata', month:'long', day:'numeric' }));
   document.querySelectorAll('[data-coupon-value]').forEach(e => e.textContent = '₹' + CONFIG.couponValue);
-  get('sCode').textContent = CONFIG.swiggyCode;
+  get('zCode').textContent = CONFIG.zeptoCode;
   get('bCode').textContent = CONFIG.bmsCode;
   document.title = 'Happiest Birthday, ' + CONFIG.name + ' 🎂';
 
