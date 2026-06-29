@@ -24,7 +24,7 @@ const REDIS_TOKEN =
   pickEnv(function (k) { return /REST_API_TOKEN$/i.test(k) && !/READ.?ONLY/i.test(k); });
 
 const KEY = 'gift_opened';
-const VALID = ['spacex', 'swiggy', 'bms'];
+const VALID = ['spacex', 'zepto', 'bms'];
 
 async function redis(command) {
   const r = await fetch(REDIS_URL, {
