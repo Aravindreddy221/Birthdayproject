@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Mounika · turning 28 🎂</title>
-<meta name="description" content="A countdown to Mounika's 28th birthday — with surprise gifts 🎁" />
+<title>Happiest Birthday, Mounika 🎂</title>
+<meta name="description" content="Happiest Birthday Mounika — with surprise gifts 🎁" />
 <meta name="theme-color" content="#FFE3F1" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,7 +16,7 @@
     --plum:#5B3470; --plum-2:#9C77AE;
     --pink:#FF5CA8; --pink-2:#FF8AC0;
     --white:#FFFFFF;
-    --space:#0B1A3B; --zomato:#CB202D; --bms:#F84464;
+    --space:#0B1A3B; --swiggy:#FC8019; --bms:#F84464;
     --up:#16A34A; --down:#E0245E;
     --bounce:cubic-bezier(.34,1.56,.64,1);
     --ease:cubic-bezier(.22,.9,.3,1);
@@ -152,32 +152,15 @@
 <main class="page">
   <!-- COUNTDOWN + GIFTS -->
   <div id="counting" style="display:contents">
-    <p class="hi pin p1">Counting down to your day! 🎉</p>
+    <p class="hi pin p1">Happiest Birthday 🎉🎂</p>
     <h1 class="name pin p2"><span data-name>Mounika</span> <span class="wig">🌸</span></h1>
-    <p class="sub pin p3">turning <span data-age>28</span> · <span data-day>June 29</span> 🎂🎈</p>
-
-    <div class="countdown pin p4" role="timer" aria-live="polite" aria-label="Time until the birthday">
-      <div class="card"><div class="num" id="d-days">--</div><div class="lab">Days</div></div>
-      <div class="card"><div class="num" id="d-hrs">--</div><div class="lab">Hours</div></div>
-      <div class="card"><div class="num" id="d-min">--</div><div class="lab">Minutes</div></div>
-      <div class="card"><div class="num" id="d-sec">--</div><div class="lab">Seconds</div></div>
-    </div>
-    <p class="note pin p4">midnight in India 🇮🇳 · IST</p>
-
-    <div class="timeline pin p5">
-      <div class="tl-track">
-        <div class="tl-fill" id="tlFill"></div>
-        <span class="tl-marker" id="tlMarker">🎈</span>
-        <span class="tl-cake">🎂</span>
-      </div>
-      <p class="tl-cap" id="tlCap">on the way to cake 🎂</p>
-    </div>
+    <p class="sub pin p3">You're <span data-age>28</span> today — let's celebrate! 🎉🎈</p>
 
     <div class="gifts-wrap pin p6">
       <p class="gifts-title">Three little gifts — tap to open! 🎁</p>
       <div class="gifts">
         <button class="gift" data-gift="spacex" aria-label="Open gift 1">🎁</button>
-        <button class="gift" data-gift="zomato" aria-label="Open gift 2">🎁</button>
+        <button class="gift" data-gift="swiggy" aria-label="Open gift 2">🎁</button>
         <button class="gift" data-gift="bms" aria-label="Open gift 3">🎁</button>
       </div>
     </div>
@@ -213,14 +196,14 @@
       <p class="line">A little SpaceX stock, just for you 🚀</p>
     </div>
 
-    <!-- Zomato -->
-    <div class="gift-view" data-view="zomato">
-      <div class="voucher" style="--brand:var(--zomato)">
-        <div class="voucher-brand">Zomato</div>
+    <!-- Swiggy -->
+    <div class="gift-view" data-view="swiggy">
+      <div class="voucher" style="--brand:var(--swiggy)">
+        <div class="voucher-brand">Swiggy</div>
         <div class="voucher-value" data-coupon-value>₹500</div>
         <div class="voucher-sub">Food Gift Voucher</div>
-        <div class="voucher-code"><span id="zCode">MOUNIKA500</span></div>
-        <button class="copy-btn" data-copy="zCode">Copy code</button>
+        <div class="voucher-code"><span id="sCode">MOUNIKA500</span></div>
+        <button class="copy-btn" data-copy="sCode">Copy code</button>
         <div class="voucher-note">Order yourself a feast, on me 🍽️</div>
       </div>
       <p class="line">Something tasty for the birthday girl 🍕</p>
@@ -254,8 +237,8 @@
     windowDays: 30,
     ticker: "SPCX",
     couponValue: 500,
-    zomatoCode: "MOUNIKA500",
-    bmsCode:    "MOUNIKA500"
+    swiggyCode: "MOUNIKA500",
+    bmsCode:    "8H4FDCS4ZC"
   };
   const STOCK_FALLBACK = { price: 155.18, prev: 156.11, asof: "Jun 24, 2026" };
   /* ───────────────────────────────────────────────────────── */
@@ -270,9 +253,9 @@
   document.querySelectorAll('[data-day]').forEach(e =>
     e.textContent = target.toLocaleDateString('en-IN', { timeZone:'Asia/Kolkata', month:'long', day:'numeric' }));
   document.querySelectorAll('[data-coupon-value]').forEach(e => e.textContent = '₹' + CONFIG.couponValue);
-  get('zCode').textContent = CONFIG.zomatoCode;
+  get('sCode').textContent = CONFIG.swiggyCode;
   get('bCode').textContent = CONFIG.bmsCode;
-  document.title = CONFIG.name + ' · turning ' + CONFIG.age + ' 🎂';
+  document.title = 'Happiest Birthday, ' + CONFIG.name + ' 🎂';
 
   // floating emojis
   const FLOATERS = ['🎈','✨','🎀','🌸','💕','🎂','🦄','🌈','⭐','🍭','🧁','🎊'];
@@ -288,27 +271,7 @@
     }
   }
 
-  // ── countdown + timeline ──
-  const pad = n => String(n).padStart(2, '0');
-  const els = { days:get('d-days'), hrs:get('d-hrs'), min:get('d-min'), sec:get('d-sec') };
-  const fill = get('tlFill'), marker = get('tlMarker'), cap = get('tlCap');
-  const startMs = target.getTime() - CONFIG.windowDays * 24 * 3600 * 1000;
-  function tick(){
-    const now = new Date();
-    let p = (now.getTime() - startMs) / (target.getTime() - startMs);
-    p = Math.max(0, Math.min(1, p));
-    const pct = Math.round(p * 100);
-    fill.style.width = pct + '%'; marker.style.left = pct + '%';
-    cap.textContent = p >= 1 ? 'You made it! 🎉' : pct + '% of the way to cake 🎂';
-    const diff = target - now;
-    if (diff <= 0){ els.days.textContent='0'; els.hrs.textContent='00'; els.min.textContent='00'; els.sec.textContent='00'; return; }
-    const s = Math.floor(diff / 1000);
-    els.days.textContent = Math.floor(s / 86400);
-    els.hrs.textContent  = pad(Math.floor(s % 86400 / 3600));
-    els.min.textContent  = pad(Math.floor(s % 3600 / 60));
-    els.sec.textContent  = pad(s % 60);
-  }
-  tick(); setInterval(tick, 1000);
+  // ── birthday mode (countdown removed) ──
 
   // ── gifts: open / back ──
   const reveal = get('reveal'), counting = get('counting'), floaties = get('floaties');
@@ -329,7 +292,7 @@
     counting.style.display = 'contents';
     floaties.style.opacity = '';
     stopStockPoll();
-    document.title = CONFIG.name + ' · turning ' + CONFIG.age + ' 🎂';
+    document.title = 'Happiest Birthday, ' + CONFIG.name + ' 🎂';
   }
   document.querySelectorAll('.gift').forEach(g => g.addEventListener('click', () => openGift(g.dataset.gift, g)));
   get('backBtn').addEventListener('click', backToGifts);
