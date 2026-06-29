@@ -129,7 +129,11 @@
   .copy-btn{ margin-top:14px; font-family:var(--fred); font-weight:600; font-size:14px; cursor:pointer; color:#fff; background:var(--brand); border:none; border-radius:999px; padding:10px 22px; user-select:none; touch-action:manipulation; transition:transform .25s var(--bounce), filter .25s ease; }
   .copy-btn:hover{ transform:scale(1.04); filter:brightness(1.05); }
   .copy-btn:active{ transform:scale(.97); }
-  .voucher-note{ margin-top:16px; font-family:var(--nun); font-weight:600; font-size:.84rem; color:#9aa0ab; }
+  .voucher-field{ margin-top:18px; }
+  .voucher-field .vf-label{ display:block; font-family:var(--nun); font-weight:700; font-size:.72rem; letter-spacing:.08em; text-transform:uppercase; color:#9aa0ab; margin-bottom:7px; }
+  .voucher-field .voucher-code{ margin-top:0; }
+  .voucher-field .copy-btn{ margin-top:10px; }
+  .voucher-note{ margin-top:18px; font-family:var(--nun); font-weight:600; font-size:.84rem; color:#9aa0ab; }
 
   .reveal .line{ margin:0; font-family:var(--fred); font-weight:500; font-size:clamp(1rem,2.6vw,1.18rem); color:var(--plum-2); }
 
@@ -202,9 +206,17 @@
         <div class="voucher-brand">Zepto</div>
         <div class="voucher-value" data-coupon-value>₹500</div>
         <div class="voucher-sub">Grocery Gift Voucher</div>
-        <div class="voucher-code"><span id="zCode">MOUNIKA500</span></div>
-        <button class="copy-btn" data-copy="zCode">Copy code</button>
-        <div class="voucher-note">Stock up on treats, on me 🛒</div>
+        <div class="voucher-field">
+          <span class="vf-label">Card number</span>
+          <div class="voucher-code"><span id="zCard">6009750019260704</span></div>
+          <button class="copy-btn" data-copy="zCard">Copy card no.</button>
+        </div>
+        <div class="voucher-field">
+          <span class="vf-label">PIN / Voucher code</span>
+          <div class="voucher-code"><span id="zCode">191780</span></div>
+          <button class="copy-btn" data-copy="zCode">Copy PIN</button>
+        </div>
+        <div class="voucher-note">Use the card number &amp; PIN to redeem 🛒</div>
       </div>
       <p class="line">A little something for the birthday girl 🛍️</p>
     </div>
@@ -237,7 +249,8 @@
     windowDays: 30,
     ticker: "SPCX",
     couponValue: 500,
-    zeptoCode: "MOUNIKA500",
+    zeptoCard: "6009750019260704",
+    zeptoCode: "191780",
     bmsCode:    "8H4FDCS4ZC"
   };
   const STOCK_FALLBACK = { price: 155.18, prev: 156.11, asof: "Jun 24, 2026" };
@@ -253,6 +266,7 @@
   document.querySelectorAll('[data-day]').forEach(e =>
     e.textContent = target.toLocaleDateString('en-IN', { timeZone:'Asia/Kolkata', month:'long', day:'numeric' }));
   document.querySelectorAll('[data-coupon-value]').forEach(e => e.textContent = '₹' + CONFIG.couponValue);
+  get('zCard').textContent = CONFIG.zeptoCard;
   get('zCode').textContent = CONFIG.zeptoCode;
   get('bCode').textContent = CONFIG.bmsCode;
   document.title = 'Happiest Birthday, ' + CONFIG.name + ' 🎂';
