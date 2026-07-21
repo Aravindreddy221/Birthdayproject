@@ -1,5 +1,0 @@
-Move your existing mock.jsx into this src/ folder so the path is:
-  src/mock.jsx
-
-Its default export (PartnerSSODemo) is already wired up in src/main.jsx.
-Then delete this .txt file.
