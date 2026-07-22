@@ -1265,89 +1265,19 @@ function CoverageDeterminationStage({ caseItem }) {
   );
 }
 
-// ---- Stage 3: Benefit Investigation — only Drug, and PA & Financial (empty for now) ----
-
-function DrugSubTab({ caseItem }) {
-  const rx = mockEnrollmentDataFromCase(caseItem).prescription;
-  const diagnosis = mockEnrollmentDataFromCase(caseItem).diagnosis;
-  const [drugName, setDrugName] = useState(rx.drugName || "");
-  const [ndc, setNdc] = useState("");
-  const [hcpcs, setHcpcs] = useState("");
-  const [doseStrength, setDoseStrength] = useState(rx.strength ? `${rx.strength} ${rx.strengthUnit || ""}`.trim() : "");
-  const [quantityFrequency, setQuantityFrequency] = useState("");
-  const [route, setRoute] = useState(rx.routeOfAdministration || "");
-  const [siteOfCare, setSiteOfCare] = useState("");
-  const [stepTherapy, setStepTherapy] = useState("");
-
-  return (
-    <div className="flex flex-col gap-5">
-      <TextField label="Drug Name" required value={drugName} onChange={setDrugName} />
-      <TextField label="NDC" value={ndc} onChange={setNdc} placeholder="Search drug name or enter NDC" />
-      <TextField label="HCPCS / J-Code" value={hcpcs} onChange={setHcpcs} placeholder="HCPCS / J-Code" />
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-slate-700">
-          <span className="mr-1 text-red-500">*</span>ICD-10 Code(s)
-        </label>
-        <div className="flex flex-wrap items-center gap-2 rounded-md border border-slate-200 px-3 py-2">
-          <span className="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-600">
-            {diagnosis.icd10 || "D30.01"}
-            <X size={11} />
-          </span>
-        </div>
-      </div>
-      <TextField label="Dose / Strength" value={doseStrength} onChange={setDoseStrength} placeholder="Dose / Strength" />
-      <TextField label="Quantity & Frequency" value={quantityFrequency} onChange={setQuantityFrequency} placeholder="Quantity & Frequency" />
-      <SelectField label="Route of Administration" value={route} onChange={setRoute} options={["Inhaled", "Oral", "Subcutaneous", "Intramuscular", "Intravenous"]} placeholder="Select Route of Administration" />
-      <SelectField label="Site of Care" value={siteOfCare} onChange={setSiteOfCare} options={["Physician Office", "Outpatient Hospital", "Home Infusion", "Specialty Pharmacy"]} placeholder="Select Site of Care" />
-      <SelectField label="Step Therapy Required?" value={stepTherapy} onChange={setStepTherapy} options={["Yes", "No"]} placeholder="Select" />
-    </div>
-  );
-}
-
-// Separate sub-tab within Benefit Investigation, distinct from the Prior Authorization pentagon.
-// Only surfaces whether PA is required — the actual PA workflow lives under its own pentagon.
-function PARequiredSubTab({ caseItem }) {
-  const required = caseItem.paRequired === true;
-  const style = required ? "border-orange-200 bg-orange-50 text-orange-600" : "border-green-200 bg-green-50 text-green-600";
-  return (
-    <div className="flex flex-col items-center gap-4 rounded-lg bg-slate-50 px-6 py-14 text-center">
-      <span className={`flex h-14 w-14 items-center justify-center rounded-full border ${style}`}>
-        {required ? <AlertTriangle size={26} /> : <CheckCircle2 size={26} />}
-      </span>
-      <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-semibold ${style}`}>
-        {required ? "Prior Authorization is required for this case" : "Prior Authorization is not required for this case"}
-      </span>
-    </div>
-  );
-}
-
 function BenefitInvestigationStage({ caseItem }) {
-  const [subTab, setSubTab] = useState("drug");
-  const tabs = [
-    { key: "drug", label: "Drug" },
-    { key: "pa", label: "Prior Authorization" },
-    { key: "financial", label: "Financial" },
-  ];
+  const required = caseItem.paRequired === true;
+  const style = required ? "border-indigo-200 bg-indigo-50 text-indigo-600" : "border-slate-300 bg-slate-100 text-slate-600";
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h3 className="text-sm font-bold text-slate-900">Benefit Investigation</h3>
-      </div>
-      <div className="flex gap-6 border-b border-slate-200">
-        {tabs.map((t) => (
-          <button
-            key={t.key}
-            onClick={() => setSubTab(t.key)}
-            className={`whitespace-nowrap border-b-2 py-3 text-sm font-medium ${subTab === t.key ? "border-indigo-600 text-indigo-600" : "border-transparent text-slate-500 hover:text-slate-700"}`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
-      <div className="pt-2">
-        {subTab === "drug" && <DrugSubTab caseItem={caseItem} />}
-        {subTab === "pa" && <PARequiredSubTab caseItem={caseItem} />}
-        {subTab === "financial" && <EmptyPlaceholder text="Financial details haven't been captured for this stage yet." />}
+      <h3 className="text-sm font-bold text-slate-900">Benefit Investigation</h3>
+      <div className="flex flex-col items-center gap-4 rounded-lg bg-slate-50 px-6 py-14 text-center">
+        <span className={`flex h-14 w-14 items-center justify-center rounded-full border ${style}`}>
+          {required ? <Flag size={26} /> : <MinusCircle size={26} />}
+        </span>
+        <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-semibold ${style}`}>
+          {required ? "PA is Required for this case" : "PA is Not Required for this case"}
+        </span>
       </div>
     </div>
   );
@@ -1494,6 +1424,16 @@ function PAStatusTab({ status }) {
 
 function PriorAuthorizationStage({ caseItem, initialSubTab }) {
   const [subTab, setSubTab] = useState(initialSubTab || "questions");
+
+  if (!caseItem.paRequired) {
+    return (
+      <div className="flex flex-col gap-4">
+        <h3 className="text-sm font-bold text-slate-900">Prior Authorization</h3>
+        <EmptyPlaceholder text="Prior Authorization is not required for this case — there is nothing to review here." />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -2183,18 +2123,20 @@ function PartnerLoginScreen({ onLogin }) {
           style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)", backgroundSize: "36px 36px" }}
         />
         <div className="relative z-10 max-w-md text-white">
+          <div className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-teal-400/30 bg-teal-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-teal-300">
+            <Building2 size={12} /> Demo Partner Environment
+          </div>
           <div className="mb-10 flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-500/20">
               <Building2 size={20} className="text-teal-300" />
             </div>
             <div>
               <p className="text-xl font-bold leading-tight">Partner ABC</p>
-              <p className="text-xs text-slate-400">Care Operations Platform</p>
             </div>
           </div>
           <h1 className="text-2xl font-bold leading-snug">Sign in to your Partner ABC workspace.</h1>
           <p className="mt-4 text-sm leading-relaxed text-slate-300">
-            Manage your organization's tools, applications, and integrations from a single home — including specialty pharmacy and access solutions like AnvayaRx.
+            This is a mock environment representing a partner organization, where the AnvayaRx application is embedded and launched via single sign-on.
           </p>
         </div>
       </div>
@@ -2202,8 +2144,11 @@ function PartnerLoginScreen({ onLogin }) {
       {/* Right sign-in panel */}
       <div className="flex w-full items-center justify-center px-6 md:w-1/2">
         <div className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          <div className="mx-auto mb-5 flex w-fit items-center gap-1.5 rounded-full border border-dashed border-slate-300 bg-slate-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+            Illustrative Partner Portal — Demo Only
+          </div>
           <h2 className="text-center text-lg font-bold text-slate-900">Sign in to Partner ABC</h2>
-          <p className="mt-1 text-center text-xs text-slate-400">Your organization's single sign-on workspace</p>
+          <p className="mt-1 text-center text-xs text-slate-400">A placeholder for your organization's own single sign-on workspace</p>
 
           <div className="mt-6 flex flex-col gap-4">
             <div>
@@ -2240,7 +2185,7 @@ function PartnerLoginScreen({ onLogin }) {
             </button>
           </div>
 
-          <div className="mt-6 border-t border-slate-100 pt-4 text-center text-[11px] text-slate-400">Partner ABC Care Operations Platform</div>
+          <div className="mt-6 border-t border-slate-100 pt-4 text-center text-[11px] text-slate-400">Partner ABC — mock environment for demo purposes</div>
         </div>
       </div>
     </div>
@@ -2249,15 +2194,18 @@ function PartnerLoginScreen({ onLogin }) {
 
 const PARTNER_APPS = [
   { name: "AnvayaRx", description: "Specialty pharmacy enrollment & prior authorization", icon: Layers, launchable: true },
-  { name: "Claims Portal", description: "Submit and track payer claims", icon: FileText, launchable: false },
-  { name: "Provider Directory", description: "Search in-network providers and facilities", icon: Users, launchable: false },
-  { name: "Billing Center", description: "Invoicing and reconciliation", icon: ClipboardList, launchable: false },
+  { name: "Feature 1", description: "Placeholder — not part of this demo", icon: FileText, launchable: false },
+  { name: "Feature 2", description: "Placeholder — not part of this demo", icon: Users, launchable: false },
+  { name: "Feature 3", description: "Placeholder — not part of this demo", icon: ClipboardList, launchable: false },
 ];
 
 function PartnerDashboardScreen({ email, onLaunchAnvayaRx }) {
   const account = PARTNER_ACCOUNTS[email];
   return (
     <div className="min-h-screen w-full bg-slate-100">
+      <div className="bg-teal-600 px-6 py-1.5 text-center text-[11px] font-semibold uppercase tracking-wide text-white">
+        Demo Partner Environment — Illustrative Only, Not a Real Product
+      </div>
       <header className="flex items-center justify-between border-b border-slate-200 bg-slate-900 px-6 py-3.5">
         <div className="flex items-center gap-2.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-500/20">
@@ -2265,7 +2213,6 @@ function PartnerDashboardScreen({ email, onLaunchAnvayaRx }) {
           </div>
           <div>
             <p className="text-sm font-bold leading-tight text-white">Partner ABC</p>
-            <p className="text-[11px] leading-tight text-slate-400">Care Operations Platform</p>
           </div>
         </div>
         <div className="flex items-center gap-2.5">
@@ -2281,7 +2228,9 @@ function PartnerDashboardScreen({ email, onLaunchAnvayaRx }) {
 
       <main className="mx-auto max-w-5xl px-6 py-10">
         <h1 className="text-xl font-bold text-slate-900">Welcome back, {account?.displayName?.split(" ")[0] || "there"}</h1>
-        <p className="mt-1 text-sm text-slate-500">Choose an application to launch.</p>
+        <p className="mt-1 text-sm text-slate-500">
+          This is a mock environment of a partner where the AnvayaRx app is embedded. Only AnvayaRx is functional below — the rest are unlabeled placeholders standing in for whatever else a partner's real portal might contain.
+        </p>
 
         <div className="mt-6 grid grid-cols-2 gap-4">
           {PARTNER_APPS.map((app) => {
