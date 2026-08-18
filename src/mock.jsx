@@ -35,6 +35,8 @@ import {
   ArrowRight,
   Loader2,
   LogOut,
+  Info,
+  Pill,
 } from "lucide-react";
 
 // ---------------------------------------------------------------------------
@@ -46,15 +48,6 @@ const NAV_ITEMS = [
   { key: "case-tracking", label: "Case Tracking", icon: ClipboardList },
   { key: "enrollment", label: "Enrollment", icon: UserPlus },
   { key: "tasks", label: "Tasks", icon: CheckSquare },
-  { key: "core", label: "Core", icon: Layers },
-];
-
-const KPIS = [
-  { label: "Total Cases", value: 18, sub: "Overall caseload" },
-  { label: "Ongoing Cases", value: 17, sub: "Open" },
-  { label: "Awaiting Tasks", value: 2, sub: "0 overdue · 0 due today" },
-  { label: "Unread Messages", value: 0, sub: "0 threads" },
-  { label: "Closed Cases", value: 1, sub: "Closed" },
 ];
 
 const QUICK_ACTIONS = [
@@ -62,20 +55,9 @@ const QUICK_ACTIONS = [
   { label: "View Tasks", sub: "Follow-up", icon: ListChecks },
 ];
 
-const CASES = [
-  { id: "41", member: "mem1985", name: "Charlie Lovejoy", status: "Draft Cases" },
-  { id: "160009538", member: "mem1985", name: "Demo Test", status: "Cases Under Plan Review" },
-  { id: "160035784", member: "mem1985", name: "Charlie Lovejoy", status: "Cases Under Plan Review" },
-  { id: "159063349", member: "mem1985", name: "Charlie Lovejoy", status: "Cases Under Plan Review" },
-  { id: "30", member: "mem1985", name: "Charlie Lovejoy", status: "Draft Cases" },
-];
 
-const STATUS_STYLES = {
-  "Draft Cases": "bg-slate-100 text-slate-600",
-  "Cases Under Plan Review": "bg-indigo-100 text-indigo-600",
-};
 
-const STATUS_OPTIONS = ["All Statuses", "Draft Cases", "Cases Under Plan Review"];
+const STATUS_OPTIONS = ["All Statuses", "Awaiting Questionnaire", "Awaiting Response", "Cases Under Plan Review", "Decisioned Cases", "Plan Needs More Information", "Eligibility Failed"];
 
 // Case Tracking table data (Programme column intentionally removed)
 const AVATAR_COLORS = [
@@ -92,16 +74,17 @@ const AVATAR_COLORS = [
 ];
 
 const CASE_TRACKING_ROWS = [
-  { patient: "Mini Mouse", memberId: "MEM19850041", caseId: "CASE-00041", programme: "Botox drug program", stage: "—", status: "Open", priority: "Normal", slaDue: "Jun 28, 2026", overdue: true, enrollmentDate: "Jun 28, 2026 2:46 PM", eligibilityStatus: "success", paRequired: true, intakeChannel: "Embedded UI" },
-  { patient: "Mickey Mouse", memberId: "MEM19850040", caseId: "CASE-00040", programme: "Botox drug program", stage: "Data & Intake", status: "Open", priority: "Normal", slaDue: "Jun 28, 2026", overdue: true, enrollmentDate: "Jun 28, 2026 1:20 PM", eligibilityStatus: "failed", paRequired: false, intakeChannel: "API" },
-  { patient: "Madmax G Madmax", memberId: "MEM19850038", caseId: "CASE-00038", programme: "Bonofide", stage: "—", status: "Open", priority: "Normal", slaDue: "Jun 28, 2026", overdue: true, enrollmentDate: "Jun 27, 2026 9:01 PM", paStatus: "Approved", eligibilityStatus: "success", paRequired: true, intakeChannel: "API" },
-  { patient: "Disney World", memberId: "MEM19850035", caseId: "CASE-00035", programme: "Sun Tech", stage: "Benefits Investigation", status: "Open", priority: "Low", slaDue: "Jul 1, 2026", overdue: true, enrollmentDate: "Jun 24, 2026 10:35 AM", paStatus: "Denied", eligibilityStatus: "success", paRequired: true, intakeChannel: "Embedded UI" },
-  { patient: "Santosh Test Nair", memberId: "MEM19850034", caseId: "CASE-00034", programme: "Bonofide", stage: "Data & Intake", status: "Open", priority: "Normal", slaDue: "Jun 24, 2026", overdue: true, enrollmentDate: "Jun 24, 2026 9:56 AM", eligibilityStatus: "failed", paRequired: false, intakeChannel: "API" },
-  { patient: "Unknown", memberId: "MEM19850033", caseId: "CASE-00033", programme: "Sun Tech", stage: "Enrollment", status: "Open", priority: "Normal", slaDue: "Jun 24, 2026", overdue: true, enrollmentDate: "Jun 24, 2026 3:55 AM", eligibilityStatus: "failed", paRequired: false, intakeChannel: "Embedded UI" },
-  { patient: "Jack Mark", memberId: "MEM19850032", caseId: "CASE-00032", programme: "Sun Tech", stage: "Treatment Scheduling", status: "Open", priority: "Normal", slaDue: "Jun 28, 2026", overdue: true, enrollmentDate: "Jun 24, 2026 3:54 AM", eligibilityStatus: "failed", paRequired: false, intakeChannel: "API" },
-  { patient: "Jackson Smith", memberId: "MEM19850031", caseId: "CASE-00031", programme: "Bonofide", stage: "Coordination", status: "Open", priority: "High", slaDue: "Jul 5, 2026", overdue: true, enrollmentDate: "Jun 23, 2026 4:47 PM", paStatus: "Partially Approved", eligibilityStatus: "success", paRequired: true, intakeChannel: "Embedded UI" },
-  { patient: "Krish Watson", memberId: "MEM19850030", caseId: "CASE-00030", programme: "Bonofide", stage: "—", status: "Open", priority: "High", slaDue: "Jun 23, 2026", overdue: true, enrollmentDate: "Jun 23, 2026 4:28 PM", eligibilityStatus: "failed", paRequired: false, intakeChannel: "API" },
-  { patient: "Emma Mark", memberId: "MEM19850029", caseId: "CASE-00029", programme: "Sun Tech", stage: "Benefits Investigation", status: "Open", priority: "High", slaDue: "Jun 25, 2026", overdue: true, enrollmentDate: "Jun 23, 2026 4:07 PM", eligibilityStatus: "failed", paRequired: false, intakeChannel: "Embedded UI" },
+  { patient: "Mini Mouse", memberId: "MEM19850041", caseId: "CASE-00041", programme: "Botox drug program", stage: "—", status: "Open", caseUrgency: "Not Urgent", slaDue: "Jun 28, 2026", overdue: true, enrollmentDate: "Jun 28, 2026 2:46 PM", eligibilityStatus: "success", paRequired: true, questionsSubmitted: false, intakeChannel: "Embedded UI" },
+  { patient: "Mickey Mouse", memberId: "MEM19850040", caseId: "CASE-00040", programme: "Botox drug program", stage: "Data & Intake", status: "Open", caseUrgency: "Not Urgent", slaDue: "Jun 28, 2026", overdue: true, enrollmentDate: "Jun 28, 2026 1:20 PM", eligibilityStatus: "failed", eligibilityFailureReason: "Member ID Invalid", paRequired: false, intakeChannel: "API" },
+  { patient: "Madmax G Madmax", memberId: "MEM19850038", caseId: "CASE-00038", programme: "Bonofide", stage: "—", status: "Open", caseUrgency: "Not Urgent", slaDue: "Jun 28, 2026", overdue: true, enrollmentDate: "Jun 27, 2026 9:01 PM", paStatus: "Approved", eligibilityStatus: "success", paRequired: true, questionsSubmitted: true, intakeChannel: "API", drugName: "ACTEMRA 162 MG/0.9 ML SYRINGE", routeOfAdministration: "Subcutaneous", prescriberName: "Scot Lovejoy", urgency: "Not Urgent", dateCreated: "06/27/2026 21:01:00", reviewSubmittedDate: "06/27/2026 21:45:12", dateClosed: "07/29/2026 14:42:16", estimatedEndDate: "08/04/2026 21:01:00", createdBy: "Aravind Reddy", authStartDate: "07/29/2026", authEndDate: "07/29/2026", authorizationId: "AUTH-8827461", approvedQuantity: "1 Syringe", approvedDaysSupply: "28 days" },
+  { patient: "Disney World", memberId: "MEM19850035", caseId: "CASE-00035", programme: "Sun Tech", stage: "Benefits Investigation", status: "Open", caseUrgency: "Not Urgent", slaDue: "Jul 1, 2026", overdue: true, enrollmentDate: "Jun 24, 2026 10:35 AM", paStatus: "Denied", eligibilityStatus: "success", paRequired: true, questionsSubmitted: true, intakeChannel: "Embedded UI", drugName: "OZEMPIC 0.25-0.5 MG/DOSE PEN", routeOfAdministration: "Subcutaneous", prescriberName: "Scot Lovejoy", urgency: "Not Urgent", dateCreated: "06/24/2026 10:35:00", reviewSubmittedDate: "06/24/2026 11:20:44", dateClosed: "07/29/2026 14:27:54", estimatedEndDate: "—", createdBy: "Aravind Reddy", authStartDate: "—", authEndDate: "—", authorizationId: "AUTH-8827398", denialReason: "the medication does not meet the plan\u2019s step therapy requirements" },
+  { patient: "Santosh Test Nair", memberId: "MEM19850034", caseId: "CASE-00034", programme: "Bonofide", stage: "Data & Intake", status: "Open", caseUrgency: "Not Urgent", slaDue: "Jun 24, 2026", overdue: false, enrollmentDate: "Jun 24, 2026 9:56 AM", eligibilityStatus: "pending", intakeChannel: "API" },
+  { patient: "Priya Sharma", memberId: "MEM19850036", caseId: "CASE-00036", programme: "Sun Tech", stage: "Coordination", status: "Open", caseUrgency: "Not Urgent", slaDue: "Jun 26, 2026", overdue: false, enrollmentDate: "Jun 25, 2026 11:12 AM", eligibilityStatus: "success", paRequired: true, questionsSubmitted: true, intakeChannel: "Embedded UI" },
+  { patient: "Unknown", memberId: "MEM19850033", caseId: "CASE-00033", programme: "Sun Tech", stage: "Enrollment", status: "Open", caseUrgency: "Not Urgent", slaDue: "Jun 24, 2026", overdue: true, enrollmentDate: "Jun 24, 2026 3:55 AM", eligibilityStatus: "failed", eligibilityFailureReason: "Date of Birth Invalid", paRequired: false, intakeChannel: "Embedded UI" },
+  { patient: "Jack Mark", memberId: "MEM19850032", caseId: "CASE-00032", programme: "Sun Tech", stage: "Treatment Scheduling", status: "Open", caseUrgency: "Not Urgent", slaDue: "Jun 28, 2026", overdue: true, enrollmentDate: "Jun 24, 2026 3:54 AM", eligibilityStatus: "failed", paRequired: false, intakeChannel: "API" },
+  { patient: "Jackson Smith", memberId: "MEM19850031", caseId: "CASE-00031", programme: "Bonofide", stage: "Coordination", status: "Open", caseUrgency: "Urgent", slaDue: "Jul 5, 2026", overdue: true, enrollmentDate: "Jun 23, 2026 4:47 PM", paStatus: "Partially Approved", eligibilityStatus: "success", paRequired: true, questionsSubmitted: true, intakeChannel: "Embedded UI", drugName: "HUMIRA 40 MG/0.4 ML PEN", routeOfAdministration: "Subcutaneous", prescriberName: "Scot Lovejoy", urgency: "Not Urgent", dateCreated: "06/23/2026 16:47:00", reviewSubmittedDate: "06/23/2026 17:30:08", dateClosed: "07/29/2026 14:35:41", estimatedEndDate: "10/27/2026 16:47:00", createdBy: "Aravind Reddy", authStartDate: "07/29/2026", authEndDate: "10/27/2026", authorizationId: "AUTH-8827412", approvedQuantity: "2 Pens", approvedDaysSupply: "90 days", partialReason: "quantity approved is limited to a 3-month supply pending re-authorization" },
+  { patient: "Krish Watson", memberId: "MEM19850030", caseId: "CASE-00030", programme: "Bonofide", stage: "Coordination", status: "Open", caseUrgency: "Urgent", slaDue: "Jun 23, 2026", overdue: true, enrollmentDate: "Jun 23, 2026 4:28 PM", paStatus: "Plan Needs More Information", eligibilityStatus: "success", paRequired: true, questionsSubmitted: true, intakeChannel: "API", drugName: "ACTEMRA 162 MG/0.9 ML SYRINGE", routeOfAdministration: "Subcutaneous", prescriberName: "Scot Lovejoy", urgency: "Not Urgent", dateCreated: "06/23/2026 16:28:00", reviewSubmittedDate: "06/23/2026 17:10:22", estimatedEndDate: "—", createdBy: "Aravind Reddy", authStartDate: "—", authEndDate: "—", authorizationId: "AUTH-8827455", moreInfoRequested: "additional chart notes documenting the patient\u2019s most recent disease activity assessment" },
+  { patient: "Emma Mark", memberId: "MEM19850029", caseId: "CASE-00029", programme: "Sun Tech", stage: "Benefits Investigation", status: "Open", caseUrgency: "Urgent", slaDue: "Jun 25, 2026", overdue: true, enrollmentDate: "Jun 23, 2026 4:07 PM", eligibilityStatus: "failed", paRequired: false, intakeChannel: "Embedded UI" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -109,7 +92,15 @@ const CASE_TRACKING_ROWS = [
 // (separate module, reached only via a Task deep link — scoped to this screen only)
 // ---------------------------------------------------------------------------
 
-const CORE_NAV_ITEMS = ["Cases", "Patients", "Enrollment Portal"];
+// Partner self-service user management -- off by default for every Partner.
+// AnvayaRx Admin enables this per-Partner from Govern's Super Admin > Groups,
+// by granting the core.user_admin.manage / core.user_admin.read permissions to
+// that Partner's group (Section 4.2.2). This flag stands in for that
+// Partner-specific permission state in this mock; flip to true to preview
+// what a Partner sees once AnvayaRx Admin has turned it on for them.
+const PARTNER_USER_MANAGEMENT_ENABLED = false;
+
+const CORE_NAV_ITEMS = PARTNER_USER_MANAGEMENT_ENABLED ? ["Cases", "Patients", "Users"] : ["Cases", "Patients"];
 
 // Patients list — same people as CASE_TRACKING_ROWS so the Cases/Enrolments
 // sub-tables on the patient detail view can link straight through.
@@ -127,7 +118,7 @@ const PATIENTS = [
 ];
 
 // The 6-step Prior Authorization pipeline used on the Core case screen, for every case.
-const CORE_STAGE_LABELS = ["Data & Intake", "Coverage Determination", "Benefit Investigation", "Prior Authorization", "PA Review", "Appeals"];
+const CORE_STAGE_LABELS = ["Data & Intake", "Coverage Determination", "Benefits Investigation", "Prior Authorization", "PA Review", "Appeals"];
 
 const PA_QUESTIONS = [
   { id: 1, text: "Has the patient tried and failed a preferred alternative therapy?" },
@@ -137,26 +128,60 @@ const PA_QUESTIONS = [
   { id: 5, text: "Any additional comments for the payer's review team?" },
 ];
 
+// Fixed demo answers for cases whose PA has already been decided — shown
+// read-only, so a resolved case doesn't present the same blank question flow
+// as an unanswered one.
+const PA_QUESTION_ANSWERS = [
+  "Yes — patient failed a 3-month trial of a preferred alternative therapy due to inadequate response.",
+  "72 kg",
+  "Yes — documented in the clinical notes submitted with this case.",
+  "Yes — supporting clinical notes were attached at submission.",
+  "No additional comments.",
+];
+
+// Parallel to PA_QUESTION_ANSWERS -- filename of the supplementary document
+// uploaded alongside that specific question's answer, or null if none was attached.
+const PA_QUESTION_DOCUMENTS = [
+  "Prior_Therapy_Failure_Notes.pdf",
+  null,
+  null,
+  "Supporting_Clinical_Notes.pdf",
+  null,
+];
+
 const PA_STATUS_STYLES = {
+  "Awaiting Questionnaire": { pill: "border-slate-300 bg-slate-100 text-slate-600", icon: Clock },
+  "Awaiting Response": { pill: "border-amber-200 bg-amber-50 text-amber-600", icon: Clock },
   "Case Under Plan Review": { pill: "border-amber-200 bg-amber-50 text-amber-600", icon: Clock },
   Approved: { pill: "border-green-200 bg-green-50 text-green-600", icon: CheckCircle2 },
   Denied: { pill: "border-red-200 bg-red-50 text-red-600", icon: XCircle },
   "Partially Approved": { pill: "border-orange-200 bg-orange-50 text-orange-600", icon: AlertTriangle },
+  "Plan Needs More Information": { pill: "border-purple-200 bg-purple-50 text-purple-600", icon: AlertTriangle },
+};
+
+// Hover-tooltip copy for each PA Status datapoint's info icon. Left blank for
+// now -- populate once the exact field definitions are provided.
+const PA_FIELD_DESCRIPTIONS = {
+  "Urgency": "",
+  "Estimated End Date & Time": "",
+  "Date & Time Created": "",
+  "Review Submitted Date & Time": "",
+  "Date & Time Closed": "",
+  "Status/Decision": "",
+  "Authorization ID": "",
+  "Authorization Start Date": "",
+  "Authorization End Date": "",
+  "Approved Quantity": "",
+  "Approved Days Supply": "",
 };
 
 // Tasks — PA Questions / PA Status are the new, most-used types; existing generic
 // types (signature, document_request, other) are kept as-is for other workflows.
 const TASKS = [
-  { title: "Answer PA Questions", type: "pa_questions", caseId: "CASE-00041", programme: "Botox drug program", priority: "Normal", status: "Pending", dueDate: "Jul 2, 2026", createdAt: "Jun 28, 2026" },
-  { title: "PA Status", type: "pa_status", caseId: "CASE-00038", programme: "Bonofide", priority: "Normal", status: "Pending", dueDate: "—", createdAt: "Jun 27, 2026" },
-  { title: "asa", type: "signature", caseId: "CASE-00041", programme: "Botox drug program", priority: "Normal", status: "Acknowledged", dueDate: "—", createdAt: "Jun 28, 2026" },
-  { title: "Signature Required", type: "signature", caseId: "CASE-00030", programme: "Bonofide", priority: "Normal", status: "Responded", dueDate: "Jun 24, 2026", createdAt: "Jun 24, 2026" },
-  { title: "Submit docs", type: "document_request", caseId: "CASE-00024", programme: "Bonofide", priority: "Normal", status: "Responded", dueDate: "Jun 24, 2026", createdAt: "Jun 23, 2026" },
-  { title: "test test", type: "document_request", caseId: "CASE-00025", programme: "Sun Tech", priority: "Normal", status: "Completed", dueDate: "Jun 23, 2026", createdAt: "Jun 23, 2026" },
-  { title: "PA Document upload", type: "document_request", caseId: "CASE-00016", programme: "Bonofide", priority: "High", status: "Completed", dueDate: "Jun 22, 2026", createdAt: "Jun 21, 2026" },
-  { title: "Test Document", type: "document_request", caseId: "CASE-00009", programme: "Sun Tech", priority: "Normal", status: "Responded", dueDate: "Jun 14, 2026", createdAt: "Jun 13, 2026" },
-  { title: "dbfb", type: "other", caseId: "CASE-00009", programme: "Sun Tech", priority: "Normal", status: "Pending", dueDate: "Jun 13, 2026", createdAt: "Jun 13, 2026" },
-  { title: "Dummy Document", type: "document_request", caseId: "CASE-00009", programme: "Sun Tech", priority: "Normal", status: "Responded", dueDate: "Jun 12, 2026", createdAt: "Jun 13, 2026" },
+  { title: "Answer PA Questions", type: "pa_questions", caseId: "CASE-00041", programme: "Botox drug program", caseUrgency: "Not Urgent", status: "Pending", dueDate: "Jul 2, 2026", createdAt: "Jun 28, 2026" },
+  { title: "PA Status", type: "pa_status", caseId: "CASE-00038", programme: "Bonofide", caseUrgency: "Not Urgent", status: "Pending", dueDate: "—", createdAt: "Jun 27, 2026" },
+  { title: "PA Status", type: "pa_status", caseId: "CASE-00031", programme: "Bonofide", caseUrgency: "Urgent", status: "Pending", dueDate: "—", createdAt: "Jun 23, 2026" },
+  { title: "PA Status", type: "pa_status", caseId: "CASE-00030", programme: "Bonofide", caseUrgency: "Urgent", status: "Pending", dueDate: "—", createdAt: "Jun 23, 2026" },
 ];
 
 const TASK_STATUS_STYLES = {
@@ -166,37 +191,38 @@ const TASK_STATUS_STYLES = {
   Pending: "border-slate-200 bg-slate-100 text-slate-500",
 };
 
-const PRIORITY_STYLES = {
-  Normal: "border-indigo-200 text-indigo-600 bg-white",
-  Low: "border-slate-200 text-slate-500 bg-white",
-  High: "border-orange-200 text-orange-600 bg-white",
+const URGENCY_STYLES = {
+  "Urgent": "border-orange-200 text-orange-600 bg-white",
+  "Not Urgent": "border-indigo-200 text-indigo-600 bg-white",
 };
 
 // Enrollments list data (Programme + Submitted Via columns intentionally removed)
 // Case IDs line up with CASE_TRACKING_ROWS so "open linked case" can jump straight there.
 const ENROLLMENT_STATUS_STYLES = {
-  Approved: { pill: "bg-green-50 text-green-600 border-green-200", icon: CheckCircle2 },
+  Accepted: { pill: "bg-green-50 text-green-600 border-green-200", icon: CheckCircle2 },
   Draft: { pill: "bg-slate-100 text-slate-500 border-slate-200", icon: FileText },
   Submitted: { pill: "bg-indigo-50 text-indigo-600 border-indigo-200", icon: Clock },
 };
 
 const ENROLLMENTS = [
-  { patient: "Mini Mouse", enrollmentId: "ENR-0062", caseId: "CASE-00041", status: "Approved", priority: "Normal", createdAt: "Jun 28, 2026 2:46 PM" },
-  { patient: "Mickey Mouse", enrollmentId: "ENR-0061", caseId: "CASE-00040", status: "Approved", priority: "Normal", createdAt: "Jun 28, 2026 1:18 PM" },
-  { patient: "Madmax G Madmax", enrollmentId: "ENR-0059", caseId: "CASE-00038", status: "Approved", priority: "Normal", createdAt: "Jun 27, 2026 9:00 PM" },
-  { patient: "—", enrollmentId: "ENR-0054", caseId: "—", status: "Draft", priority: "Normal", createdAt: "Jun 24, 2026 12:22 PM" },
-  { patient: "Santosh Test Nair Test", enrollmentId: "ENR-646F33E6", caseId: "CASE-00034", status: "Approved", priority: "Normal", createdAt: "Jun 24, 2026 9:56 AM" },
-  { patient: "Disney World", enrollmentId: "ENR-0053", caseId: "CASE-00035", status: "Approved", priority: "Low", createdAt: "Jun 24, 2026 9:04 AM" },
-  { patient: "—", enrollmentId: "ENR-809DDB8C", caseId: "CASE-00033", status: "Approved", priority: "Normal", createdAt: "Jun 24, 2026 3:55 AM" },
-  { patient: "—", enrollmentId: "ENR-A5C38E9C", caseId: "CASE-00032", status: "Approved", priority: "Normal", createdAt: "Jun 24, 2026 3:54 AM" },
-  { patient: "Jackson Smith", enrollmentId: "ENR-0052", caseId: "CASE-00031", status: "Approved", priority: "High", createdAt: "Jun 23, 2026 4:44 PM" },
-  { patient: "Helen Garth", enrollmentId: "ENR-0051", caseId: "—", status: "Submitted", priority: "Normal", createdAt: "Jun 23, 2026 4:42 PM" },
+  { patient: "Mini Mouse", enrollmentId: "ENR-0062", caseId: "CASE-00041", status: "Accepted", caseUrgency: "Not Urgent", createdAt: "Jun 28, 2026 2:46 PM" },
+  { patient: "Mickey Mouse", enrollmentId: "ENR-0061", caseId: "CASE-00040", status: "Accepted", caseUrgency: "Not Urgent", createdAt: "Jun 28, 2026 1:18 PM" },
+  { patient: "Madmax G Madmax", enrollmentId: "ENR-0059", caseId: "CASE-00038", status: "Accepted", caseUrgency: "Not Urgent", createdAt: "Jun 27, 2026 9:00 PM" },
+  { patient: "—", enrollmentId: "ENR-0054", caseId: "—", status: "Draft", caseUrgency: "Not Urgent", createdAt: "Jun 24, 2026 12:22 PM" },
+  { patient: "Santosh Test Nair Test", enrollmentId: "ENR-646F33E6", caseId: "CASE-00034", status: "Accepted", caseUrgency: "Not Urgent", createdAt: "Jun 24, 2026 9:56 AM" },
+  { patient: "Disney World", enrollmentId: "ENR-0053", caseId: "CASE-00035", status: "Accepted", caseUrgency: "Not Urgent", createdAt: "Jun 24, 2026 9:04 AM" },
+  { patient: "—", enrollmentId: "ENR-809DDB8C", caseId: "CASE-00033", status: "Accepted", caseUrgency: "Not Urgent", createdAt: "Jun 24, 2026 3:55 AM" },
+  { patient: "—", enrollmentId: "ENR-A5C38E9C", caseId: "CASE-00032", status: "Accepted", caseUrgency: "Not Urgent", createdAt: "Jun 24, 2026 3:54 AM" },
+  { patient: "Jackson Smith", enrollmentId: "ENR-0052", caseId: "CASE-00031", status: "Accepted", caseUrgency: "Urgent", createdAt: "Jun 23, 2026 4:44 PM" },
+  { patient: "Helen Garth", enrollmentId: "ENR-0051", caseId: "—", status: "Submitted", caseUrgency: "Not Urgent", createdAt: "Jun 23, 2026 4:42 PM" },
 ];
 
 const ENROLLMENT_TABS = [
   "Patient Information",
   "Patient Insurance",
   "Prescriber Information",
+  "Rendering Provider",
+  "Pharmacy",
   "Diagnosis",
   "Prescription",
   "Prescriber Signature",
@@ -209,13 +235,15 @@ const ENROLLMENT_TABS = [
 
 function emptyEnrollmentData() {
   return {
-    patient: { firstName: "", lastName: "", dob: "", gender: "", preferredLanguage: "", addressLine1: "", addressLine2: "", city: "", state: "", zip: "" },
-    insurance: { primaryInsurance: "", primaryPolicyHolder: "", primaryPolicyId: "", primaryGroup: "", primaryPhoneType: "Mobile", primaryPhone: "", secondaryInsurance: "", secondaryPolicyHolder: "", secondaryPolicyId: "", secondaryGroup: "", secondaryPhoneType: "Mobile", secondaryPhone: "" },
-    prescriber: { accountName: "", firstName: "", lastName: "", npi: "", stateLicense: "", taxId: "", phoneType: "Mobile", phone: "", faxType: "Mobile", fax: "", streetAddress: "", suite: "", city: "", state: "", zip: "" },
+    patient: { firstName: "", lastName: "", dob: "", gender: "", preferredLanguage: "", addressLine1: "", addressLine2: "", city: "", state: "", zip: "", country: "" },
+    insurance: { memberId: "", primaryInsurance: "", primaryPolicyHolder: "", primaryPolicyId: "", primaryGroup: "", primaryPhoneType: "Mobile", primaryPhone: "", secondaryInsurance: "", secondaryPolicyHolder: "", secondaryPolicyId: "", secondaryGroup: "", secondaryPhoneType: "Mobile", secondaryPhone: "" },
+    prescriber: { accountName: "", firstName: "", lastName: "", npi: "", stateLicense: "", taxId: "", phoneType: "Mobile", phone: "", faxType: "Mobile", fax: "", streetAddress: "", suite: "", city: "", state: "", zip: "", country: "" },
+    renderingProvider: { sameAsPrescriber: true, firstName: "", lastName: "", npi: "", phoneType: "Mobile", phone: "", faxType: "Mobile", fax: "", streetAddress: "", suite: "", city: "", state: "", zip: "", country: "" },
+    pharmacy: { npi: "", ncpdpId: "", businessName: "", streetAddress: "", suite: "", city: "", state: "", zip: "", country: "", phoneType: "Mobile", phone: "", faxType: "Mobile", fax: "" },
     diagnosis: { icd10: "", otherCode: "" },
-    prescription: { drugName: "", dosageForm: "", routeOfAdministration: "", strength: "", strengthUnit: "", firstInfusion: false, secondInfusion: false, subsequentInfusion: false, refillQuantity: "", mostRecentDMT: "", allergies: "", sendEPrescription: false, otherDiagnosisCode: "" },
+    prescription: { drugName: "", ndc: "", jCode: "", quantity: "", daysSupply: "", startDateOfService: "", endDateOfService: "", buyAndBill: "", administeredLocation: "", dosageForm: "", routeOfAdministration: "", strength: "", strengthUnit: "", firstInfusion: false, secondInfusion: false, subsequentInfusion: false, refillQuantity: "", mostRecentDMT: "", allergies: "", sendEPrescription: false, otherDiagnosisCode: "" },
     signature: { certifiedName: "", date: "", agreed: false },
-    submission: { priority: "Normal" },
+    submission: { caseUrgency: "Not Urgent" },
   };
 }
 
@@ -235,8 +263,10 @@ function mockEnrollmentDataFromCase(caseItem) {
       city: "Springfield",
       state: "IL",
       zip: "62704",
+      country: "United States",
     },
     insurance: {
+      memberId: caseItem?.memberId || "MEM19850000",
       primaryInsurance: "Anthem BlueCross",
       primaryPolicyHolder: caseItem?.patient || "",
       primaryPolicyId: caseItem?.memberId ? `${caseItem.memberId}-X` : "INVALID-ID",
@@ -266,10 +296,50 @@ function mockEnrollmentDataFromCase(caseItem) {
       city: "Springfield",
       state: "IL",
       zip: "62701",
+      country: "United States",
+    },
+    renderingProvider: {
+      sameAsPrescriber: true,
+      firstName: "",
+      lastName: "",
+      npi: "",
+      phoneType: "Mobile",
+      phone: "",
+      faxType: "Mobile",
+      fax: "",
+      streetAddress: "",
+      suite: "",
+      city: "",
+      state: "",
+      zip: "",
+      country: "",
+    },
+    pharmacy: {
+      npi: "1922334455",
+      ncpdpId: "3299481",
+      businessName: "Sun Tech Specialty Pharmacy",
+      streetAddress: "18 Commerce Way",
+      suite: "",
+      city: "Springfield",
+      state: "IL",
+      zip: "62702",
+      country: "United States",
+      phoneType: "Mobile",
+      phone: "(555) 887-2200",
+      faxType: "Mobile",
+      fax: "(555) 887-2201",
     },
     diagnosis: { icd10: "G35 MS", otherCode: "" },
     prescription: {
       drugName: "Botox",
+      ndc: "00023-1145-01",
+      jCode: "J0585",
+      quantity: "1",
+      daysSupply: "90",
+      startDateOfService: "07/01/2026",
+      endDateOfService: "09/28/2026",
+      administeredLocation: "Physician's Office",
+      buyAndBill: "Yes",
       dosageForm: "Injection",
       routeOfAdministration: "Intramuscular",
       strength: "100",
@@ -284,21 +354,13 @@ function mockEnrollmentDataFromCase(caseItem) {
       otherDiagnosisCode: "",
     },
     signature: { certifiedName: "Scot Lovejoy", date: "06/28/2026", agreed: true },
-    submission: { priority: caseItem?.priority || "Normal" },
+    submission: { caseUrgency: caseItem?.caseUrgency || "Not Urgent" },
   };
 }
 
 // ---------------------------------------------------------------------------
 // Small building blocks
 // ---------------------------------------------------------------------------
-
-function StatusChip({ status }) {
-  return (
-    <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${STATUS_STYLES[status] || "bg-slate-100 text-slate-600"}`}>
-      {status}
-    </span>
-  );
-}
 
 function OpenStatusBadge() {
   return (
@@ -317,43 +379,67 @@ const CASE_STATUS_TONE_STYLES = {
   orange: { className: "border-orange-200 bg-orange-50 text-orange-600", icon: AlertTriangle },
   amber: { className: "border-amber-200 bg-amber-50 text-amber-600", icon: Clock },
   blue: { className: "border-indigo-200 bg-indigo-50 text-indigo-600", icon: FileText },
+  slate: { className: "border-slate-300 bg-slate-100 text-slate-600", icon: FileText },
+  purple: { className: "border-purple-200 bg-purple-50 text-purple-600", icon: AlertTriangle },
 };
 
+// Standardized case-status taxonomy (6 canonical buckets), applied identically
+// in Case Tracking's Status column and everywhere else a case status is shown,
+// for both the Partner and AnvayaRx Admin views:
+//   1. Eligibility Failed          -- eligibilityStatus="failed"; specific reason shown on click-through only
+//   2. Awaiting Questionnaire      -- eligibilityStatus="pending": Agadia-level Eligibility/BI validation still running
+//   3. Awaiting Response           -- Eligibility/BI passed, questionnaire arrived, Partner has not yet submitted answers
+//   4. Cases Under Plan Review     -- answers submitted, awaiting the PA decision from Agadia/Payer
+//   5. Decisioned Cases            -- paStatus is Approved / Denied / Partially Approved; specific outcome shown on click-through only
+//   6. Plan Needs More Information -- its own distinct bucket, not grouped with Decisioned Cases
 function getCaseStatusInfo(caseItem) {
   if (caseItem.eligibilityStatus === "failed") {
-    return { label: "Eligibility Failed - Member ID Invalid", tone: "red" };
+    return { label: "Eligibility Failed", tone: "red" };
   }
-  if (caseItem.paStatus === "Approved") return { label: "Prior Authorization Approved", tone: "green" };
-  if (caseItem.paStatus === "Denied") return { label: "Prior Authorization Denied", tone: "red" };
-  if (caseItem.paStatus === "Partially Approved") return { label: "Prior Authorization Partially Approved", tone: "orange" };
-  if (caseItem.paRequired) return { label: "Pending Prior Authorization", tone: "amber" };
-  return { label: "In Benefit Investigation", tone: "blue" };
+  if (caseItem.eligibilityStatus === "pending") {
+    return { label: "Awaiting Questionnaire", tone: "slate" };
+  }
+  if (caseItem.paStatus === "Plan Needs More Information") {
+    return { label: "Plan Needs More Information", tone: "purple" };
+  }
+  if (caseItem.paStatus === "Approved" || caseItem.paStatus === "Denied" || caseItem.paStatus === "Partially Approved") {
+    return { label: "Decisioned Cases", tone: "slate" };
+  }
+  if (caseItem.paRequired) {
+    if (caseItem.questionsSubmitted) {
+      return { label: "Cases Under Plan Review", tone: "amber" };
+    }
+    return { label: "Awaiting Response", tone: "amber" };
+  }
+  return { label: "In Benefits Investigation", tone: "blue" };
 }
 
 // Maps a case onto the same 6-pentagon pipeline used on the Core PA screen
-// (Data & Intake, Coverage Determination, Benefit Investigation, Prior
+// (Data & Intake, Coverage Determination, Benefits Investigation, Prior
 // Authorization, PA Review, Appeals) so both portals always agree.
 function getCoreStageIndex(caseItem) {
+  if (caseItem.eligibilityStatus === "pending") return 1; // Eligibility/BI still running -- sitting at Coverage Determination
   if (caseItem.eligibilityStatus === "failed") return 1; // stuck at Coverage Determination
   if (caseItem.paStatus || caseItem.paRequired) return 3; // in/through Prior Authorization
-  return 2; // cleared eligibility, sitting in Benefit Investigation
+  return 2; // cleared eligibility, sitting in Benefits Investigation
 }
 
-function CaseStatusBadge({ caseItem }) {
+function CaseStatusBadge({ caseItem, showReason = false }) {
   const { label, tone } = getCaseStatusInfo(caseItem);
   const style = CASE_STATUS_TONE_STYLES[tone];
   const Icon = style.icon;
+  const displayLabel = showReason && caseItem.eligibilityStatus === "failed" ? `${label} \u2014 ${caseItem.eligibilityFailureReason || "Reason not specified"}` : label;
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-semibold ${style.className}`}>
-      <Icon size={12} /> {label}
+      <Icon size={12} /> {displayLabel}
     </span>
   );
 }
 
-function PriorityBadge({ priority }) {
+function UrgencyBadge({ urgency }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium ${PRIORITY_STYLES[priority] || PRIORITY_STYLES.Normal}`}>
-      <Flag size={12} /> {priority}
+    <span className={`inline-flex items-center gap-1 rounded-md border px-2.5 py-1 text-xs font-medium ${URGENCY_STYLES[urgency] || URGENCY_STYLES["Not Urgent"]}`}>
+      <Flag size={12} /> {urgency}
     </span>
   );
 }
@@ -484,10 +570,13 @@ function CheckboxField({ label, checked, onChange }) {
   );
 }
 
-function PhoneField({ label, typeValue, phoneValue, onTypeChange, onPhoneChange }) {
+function PhoneField({ label, required, typeValue, phoneValue, onTypeChange, onPhoneChange }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
+      <label className="mb-1.5 block text-sm font-medium text-slate-700">
+        {required && <span className="mr-1 text-red-500">*</span>}
+        {label}
+      </label>
       <div className="flex gap-2">
         <select value={typeValue} onChange={(e) => onTypeChange(e.target.value)} className="w-32 rounded-md border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none">
           <option>Mobile</option>
@@ -528,16 +617,17 @@ function PatientInformationTab({ data, update }) {
         <TextField label="First Name" required value={d.firstName} onChange={set("firstName")} />
         <TextField label="Last Name" required value={d.lastName} onChange={set("lastName")} />
         <TextField label="Date of Birth" required type="date" value={d.dob} onChange={set("dob")} />
-        <SelectField label="Gender" value={d.gender} onChange={set("gender")} options={["Female", "Male", "Non-binary", "Prefer not to say"]} placeholder="Select Gender" />
+        <SelectField label="Gender" required value={d.gender} onChange={set("gender")} options={["Female", "Male", "Non-binary", "Prefer not to say"]} placeholder="Select Gender" />
         <SelectField label="Preferred Language" value={d.preferredLanguage} onChange={set("preferredLanguage")} options={["English", "Spanish", "French", "Mandarin"]} placeholder="Select Preferred Language" />
       </div>
       <SectionDivider label="Address" />
       <div className="grid grid-cols-2 gap-5">
-        <TextField label="Address Line 1" value={d.addressLine1} onChange={set("addressLine1")} placeholder="Street address" />
+        <TextField label="Address Line 1" required value={d.addressLine1} onChange={set("addressLine1")} placeholder="Street address" />
         <TextField label="Address Line 2" value={d.addressLine2} onChange={set("addressLine2")} placeholder="Apt, Suite, etc." />
-        <TextField label="City" value={d.city} onChange={set("city")} />
-        <SelectField label="State" value={d.state} onChange={set("state")} options={["IL", "NY", "CA", "TX", "FL"]} placeholder="Select State" />
-        <TextField label="ZIP" value={d.zip} onChange={set("zip")} />
+        <TextField label="City" required value={d.city} onChange={set("city")} />
+        <SelectField label="State" required value={d.state} onChange={set("state")} options={["IL", "NY", "CA", "TX", "FL"]} placeholder="Select State" />
+        <TextField label="Postal Code" required value={d.zip} onChange={set("zip")} />
+        <TextField label="Country" required value={d.country} onChange={set("country")} placeholder="e.g. United States" />
       </div>
     </div>
   );
@@ -550,6 +640,7 @@ function PatientInsuranceTab({ data, update }) {
     <div className="flex flex-col gap-5">
       <h3 className="text-sm font-bold text-slate-900">Patient Insurance</h3>
       <div className="grid grid-cols-2 gap-5">
+        <TextField label="Member ID (PBM Member ID / Cardholder ID)" required value={d.memberId} onChange={set("memberId")} />
         <TextField label="Primary Insurance" value={d.primaryInsurance} onChange={set("primaryInsurance")} />
         <TextField label="Primary Insurance Policy Holder" value={d.primaryPolicyHolder} onChange={set("primaryPolicyHolder")} />
         <TextField label="Primary Insurance Policy ID #" value={d.primaryPolicyId} onChange={set("primaryPolicyId")} />
@@ -594,12 +685,87 @@ function PrescriberInformationTab({ data, update }) {
         <TextField label="Tax ID #" value={d.taxId} onChange={set("taxId")} />
         <PhoneField label="Phone #" typeValue={d.phoneType} phoneValue={d.phone} onTypeChange={set("phoneType")} onPhoneChange={set("phone")} />
         <PhoneField label="Fax #" typeValue={d.faxType} phoneValue={d.fax} onTypeChange={set("faxType")} onPhoneChange={set("fax")} />
-        <TextField label="Street Address" value={d.streetAddress} onChange={set("streetAddress")} />
+        <TextField label="Street Address" required value={d.streetAddress} onChange={set("streetAddress")} />
         <TextField label="Suite #" value={d.suite} onChange={set("suite")} />
-        <TextField label="City" value={d.city} onChange={set("city")} />
-        <SelectField label="State" value={d.state} onChange={set("state")} options={["IL", "NY", "CA", "TX", "FL"]} placeholder="Select State" />
-        <TextField label="ZIP" value={d.zip} onChange={set("zip")} />
+        <TextField label="City" required value={d.city} onChange={set("city")} />
+        <SelectField label="State" required value={d.state} onChange={set("state")} options={["IL", "NY", "CA", "TX", "FL"]} placeholder="Select State" />
+        <TextField label="Postal Code" required value={d.zip} onChange={set("zip")} />
+        <TextField label="Country" required value={d.country} onChange={set("country")} placeholder="e.g. United States" />
       </div>
+      <p className="text-xs text-slate-400">At least one of Phone # or Fax # is expected — neither is required on its own.</p>
+    </div>
+  );
+}
+
+function RenderingProviderTab({ data, update }) {
+  const d = data.renderingProvider;
+  const set = (field) => (val) => update("renderingProvider", field, val);
+  return (
+    <div className="flex flex-col gap-5">
+      <h3 className="text-sm font-bold text-slate-900">Rendering Provider</h3>
+      <CheckboxField
+        label="Rendering Provider is the same as Prescriber"
+        checked={d.sameAsPrescriber}
+        onChange={set("sameAsPrescriber")}
+      />
+      {!d.sameAsPrescriber && (
+        <div className="grid grid-cols-2 gap-5">
+          <TextField label="First Name" required value={d.firstName} onChange={set("firstName")} />
+          <TextField label="Last Name" required value={d.lastName} onChange={set("lastName")} />
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+              <span className="mr-1 text-red-500">*</span>NPI #
+            </label>
+            <div className="flex gap-2">
+              <input value={d.npi} onChange={(e) => set("npi")(e.target.value)} placeholder="NPI #" className="flex-1 rounded-md border border-slate-200 px-3 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none" />
+              <button className="flex items-center gap-1.5 rounded-md border border-slate-200 px-3 py-2.5 text-sm font-medium text-indigo-600 hover:bg-slate-50">
+                <Search size={13} /> Lookup
+              </button>
+            </div>
+          </div>
+          <PhoneField label="Phone #" typeValue={d.phoneType} phoneValue={d.phone} onTypeChange={set("phoneType")} onPhoneChange={set("phone")} />
+          <PhoneField label="Fax #" typeValue={d.faxType} phoneValue={d.fax} onTypeChange={set("faxType")} onPhoneChange={set("fax")} />
+          <TextField label="Street Address" required value={d.streetAddress} onChange={set("streetAddress")} />
+          <TextField label="Suite #" value={d.suite} onChange={set("suite")} />
+          <TextField label="City" required value={d.city} onChange={set("city")} />
+          <SelectField label="State" required value={d.state} onChange={set("state")} options={["IL", "NY", "CA", "TX", "FL"]} placeholder="Select State" />
+          <TextField label="Postal Code" required value={d.zip} onChange={set("zip")} />
+          <TextField label="Country" required value={d.country} onChange={set("country")} placeholder="e.g. United States" />
+        </div>
+      )}
+      {!d.sameAsPrescriber && (
+        <p className="text-xs text-slate-400">At least one of Phone # or Fax # is expected — neither is required on its own.</p>
+      )}
+      {d.sameAsPrescriber && (
+        <p className="text-xs text-slate-400">
+          Rendering Provider details will be copied from Prescriber Information at submission. Uncheck the box above to enter different details.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function PharmacyTab({ data, update }) {
+  const d = data.pharmacy;
+  const set = (field) => (val) => update("pharmacy", field, val);
+  return (
+    <div className="flex flex-col gap-5">
+      <h3 className="text-sm font-bold text-slate-900">Pharmacy</h3>
+      <div className="grid grid-cols-2 gap-5">
+        <TextField label="NPI #" required value={d.npi} onChange={set("npi")} />
+        <TextField label="NCPDP ID" required value={d.ncpdpId} onChange={set("ncpdpId")} />
+        <TextField label="Business Name" required value={d.businessName} onChange={set("businessName")} />
+        <div />
+        <PhoneField label="Phone #" typeValue={d.phoneType} phoneValue={d.phone} onTypeChange={set("phoneType")} onPhoneChange={set("phone")} />
+        <PhoneField label="Fax #" typeValue={d.faxType} phoneValue={d.fax} onTypeChange={set("faxType")} onPhoneChange={set("fax")} />
+        <TextField label="Street Address" required value={d.streetAddress} onChange={set("streetAddress")} />
+        <TextField label="Suite #" value={d.suite} onChange={set("suite")} />
+        <TextField label="City" required value={d.city} onChange={set("city")} />
+        <SelectField label="State" required value={d.state} onChange={set("state")} options={["IL", "NY", "CA", "TX", "FL"]} placeholder="Select State" />
+        <TextField label="Postal Code" required value={d.zip} onChange={set("zip")} />
+        <TextField label="Country" required value={d.country} onChange={set("country")} placeholder="e.g. United States" />
+      </div>
+      <p className="text-xs text-slate-400">At least one of Phone # or Fax # is expected — neither is required on its own.</p>
     </div>
   );
 }
@@ -623,11 +789,28 @@ function PrescriptionTab({ data, update }) {
     <div className="flex flex-col gap-5">
       <h3 className="text-sm font-bold text-slate-900">Prescription</h3>
 
+      {/* Drug identification & billing */}
+      <div className="grid grid-cols-3 gap-5">
+        <TextField label="Drug Name (Drug Description)" required value={d.drugName} onChange={set("drugName")} />
+        <TextField label="NDC (Product Code)" required value={d.ndc} onChange={set("ndc")} placeholder="e.g. 00023-1145-01" />
+        <TextField label="J-Code (Billable HCPCS Code)" required value={d.jCode} onChange={set("jCode")} placeholder="e.g. J0585" />
+      </div>
+      <div className="grid grid-cols-3 gap-5">
+        <TextField label="Quantity" required value={d.quantity} onChange={set("quantity")} />
+        <TextField label="Days Supply" required value={d.daysSupply} onChange={set("daysSupply")} />
+        <TextField label="Drug Administered Location" required value={d.administeredLocation} onChange={set("administeredLocation")} placeholder="e.g. Physician's Office" />
+      </div>
+      <div className="grid grid-cols-3 gap-5">
+        <TextField label="Start Date of Service" required type="date" value={d.startDateOfService} onChange={set("startDateOfService")} />
+        <TextField label="End Date of Service" required type="date" value={d.endDateOfService} onChange={set("endDateOfService")} />
+        <SelectField label="Buy and Bill" required value={d.buyAndBill} onChange={set("buyAndBill")} options={["Yes", "No"]} placeholder="Select" />
+      </div>
+
       {/* Drug details */}
       <div className="grid grid-cols-3 gap-5">
-        <TextField label="Drug Name" value={d.drugName} onChange={set("drugName")} />
         <SelectField label="Dosage Form" value={d.dosageForm} onChange={set("dosageForm")} options={["Inhaler", "Tablet", "Injection", "Pen", "IV Infusion", "Capsule"]} placeholder="Select Dosage Form" />
         <SelectField label="Route of Administration" value={d.routeOfAdministration} onChange={set("routeOfAdministration")} options={["Inhaled", "Oral", "Subcutaneous", "Intramuscular", "Intravenous"]} placeholder="Select Route" />
+        <div />
       </div>
       <div className="grid grid-cols-3 gap-5">
         <TextField label="Strength" value={d.strength} onChange={set("strength")} />
@@ -680,7 +863,7 @@ function SubmissionTab({ data, update }) {
         </button>
       </div>
       <div className="w-64">
-        <SelectField label="Priority" required value={d.priority} onChange={(v) => update("submission", "priority", v)} options={["Low", "Normal", "High"]} />
+        <SelectField label="Urgency" required value={d.caseUrgency} onChange={(v) => update("submission", "urgency", v)} options={["Urgent", "Not Urgent"]} />
       </div>
     </div>
   );
@@ -727,6 +910,10 @@ function EnrollmentForm({ mode, caseItem, enrollmentId, onBack }) {
         return <PatientInsuranceTab data={data} update={update} />;
       case "Prescriber Information":
         return <PrescriberInformationTab data={data} update={update} />;
+      case "Rendering Provider":
+        return <RenderingProviderTab data={data} update={update} />;
+      case "Pharmacy":
+        return <PharmacyTab data={data} update={update} />;
       case "Diagnosis":
         return <DiagnosisTab data={data} update={update} />;
       case "Prescription":
@@ -819,10 +1006,39 @@ function DashboardScreen({ onNewEnrollment, onViewTasks }) {
     "View Tasks": onViewTasks,
   };
 
+  const totalCases = CASE_TRACKING_ROWS.length;
+  const ongoingCases = CASE_TRACKING_ROWS.filter((c) => c.status === "Open").length;
+  const closedCases = totalCases - ongoingCases;
+  const awaitingTasks = TASKS.filter((t) => t.status === "Pending").length;
+
+  const kpis = [
+    { label: "Total Cases", value: totalCases, sub: "Overall caseload" },
+    { label: "Ongoing Cases", value: ongoingCases, sub: "Open" },
+    { label: "Awaiting Tasks", value: awaitingTasks, sub: `${TASKS.length} total tasks` },
+    { label: "Closed Cases", value: closedCases, sub: "Closed" },
+  ];
+
+  // The 5 most recently created cases -- CASE_TRACKING_ROWS is already
+  // ordered most-recent-first, matching Case Tracking's own default sort.
+  const recentCases = CASE_TRACKING_ROWS.slice(0, 5);
+
+  const [caseIdFilter, setCaseIdFilter] = useState("");
+  const [memberIdFilter, setMemberIdFilter] = useState("");
+  const [nameFilter, setNameFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All Statuses");
+
+  const filteredCases = recentCases.filter((c) => {
+    if (caseIdFilter && !c.caseId.toLowerCase().includes(caseIdFilter.toLowerCase())) return false;
+    if (memberIdFilter && !(ENROLLMENTS.find((e) => e.caseId === c.caseId)?.enrollmentId || "").toLowerCase().includes(memberIdFilter.toLowerCase())) return false;
+    if (nameFilter && !c.patient.toLowerCase().includes(nameFilter.toLowerCase())) return false;
+    if (statusFilter !== "All Statuses" && getCaseStatusInfo(c).label !== statusFilter) return false;
+    return true;
+  });
+
   return (
     <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-5 gap-4">
-        {KPIS.map((k) => (
+      <div className="grid grid-cols-4 gap-4">
+        {kpis.map((k) => (
           <Card key={k.label} className="px-4 py-4">
             <p className="text-xs text-slate-500">{k.label}</p>
             <p className="mt-1 text-2xl font-bold text-slate-900">{k.value}</p>
@@ -855,32 +1071,31 @@ function DashboardScreen({ onNewEnrollment, onViewTasks }) {
       <Card className="p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-slate-900">Cases</h2>
+          <span className="text-xs text-slate-400">5 most recently created \u2014 matches Case Tracking</span>
         </div>
 
-        {/* Filter bar — field name + example folded into the placeholder text itself, no separate label */}
+        {/* Filtering happens live as you type/select -- no Apply/Clear step */}
         <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg bg-slate-50 p-3">
           <div className="flex w-36 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
             <Search size={12} className="text-slate-400" />
-            <input placeholder="Case ID (e.g. 41)" className="w-full text-xs text-slate-600 placeholder:text-slate-400 outline-none" />
+            <input value={caseIdFilter} onChange={(e) => setCaseIdFilter(e.target.value)} placeholder="Case ID (e.g. 41)" className="w-full text-xs text-slate-600 placeholder:text-slate-400 outline-none" />
           </div>
           <div className="flex w-44 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
             <Search size={12} className="text-slate-400" />
-            <input placeholder="Member ID (e.g. mem1985)" className="w-full text-xs text-slate-600 placeholder:text-slate-400 outline-none" />
+            <input value={memberIdFilter} onChange={(e) => setMemberIdFilter(e.target.value)} placeholder="Enrollment ID (e.g. ENR-0062)" className="w-full text-xs text-slate-600 placeholder:text-slate-400 outline-none" />
           </div>
           <div className="flex w-44 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
             <Search size={12} className="text-slate-400" />
-            <input placeholder="Patient Name (e.g. Charlie Lovejoy)" className="w-full text-xs text-slate-600 placeholder:text-slate-400 outline-none" />
+            <input value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} placeholder="Patient Name (e.g. Charlie Lovejoy)" className="w-full text-xs text-slate-600 placeholder:text-slate-400 outline-none" />
           </div>
-          <div className="flex w-40 items-center justify-between gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
-            <select className="w-full bg-transparent text-xs text-slate-600 outline-none">
+          <div className="flex w-48 items-center justify-between gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5">
+            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full bg-transparent text-xs text-slate-600 outline-none">
               {STATUS_OPTIONS.map((s) => (
                 <option key={s}>{s}</option>
               ))}
             </select>
             <ChevronDown size={12} className="text-slate-400" />
           </div>
-          <button className="rounded-md bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-indigo-700">Apply</button>
-          <button className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50">Clear</button>
         </div>
 
         <div className="mt-4 overflow-hidden rounded-lg border border-slate-200">
@@ -888,22 +1103,27 @@ function DashboardScreen({ onNewEnrollment, onViewTasks }) {
             <thead>
               <tr className="border-b-2 border-slate-300 bg-slate-100 text-left">
                 <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-700">Case ID</th>
-                <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-700">Member ID</th>
+                <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-700">Enrollment ID</th>
                 <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-700">Patient Name</th>
                 <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-700">Status</th>
               </tr>
             </thead>
             <tbody>
-              {CASES.map((c, idx) => (
-                <tr key={c.id} className={`${idx % 2 === 0 ? "bg-white" : "bg-slate-50"} cursor-pointer hover:bg-indigo-50/40`}>
-                  <td className="px-4 py-3 font-medium text-indigo-600">{c.id}</td>
-                  <td className="px-4 py-3 text-slate-600">{c.member}</td>
-                  <td className="px-4 py-3 text-slate-600">{c.name}</td>
+              {filteredCases.map((c, idx) => (
+                <tr key={c.caseId} className={`${idx % 2 === 0 ? "bg-white" : "bg-slate-50"} cursor-pointer hover:bg-indigo-50/40`}>
+                  <td className="px-4 py-3 font-medium text-indigo-600">{c.caseId}</td>
+                  <td className="px-4 py-3 text-slate-600">{ENROLLMENTS.find((e) => e.caseId === c.caseId)?.enrollmentId || "\u2014"}</td>
+                  <td className="px-4 py-3 text-slate-600">{c.patient}</td>
                   <td className="px-4 py-3">
-                    <StatusChip status={c.status} />
+                    <CaseStatusBadge caseItem={c} />
                   </td>
                 </tr>
               ))}
+              {filteredCases.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-6 text-center text-sm text-slate-400">No cases match these filters.</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -952,7 +1172,7 @@ function EnrollmentsListScreen({ onNew, onView, onEdit }) {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Enrollments</h1>
-          <p className="mt-1 text-sm text-slate-500">Track and manage patient enrollment submissions across all programmes.</p>
+          <p className="mt-1 text-sm text-slate-500">Track and manage patient enrollment submissions.</p>
         </div>
         <div className="flex items-center gap-2">
           <FilterSelect label="All Statuses" />
@@ -970,7 +1190,7 @@ function EnrollmentsListScreen({ onNew, onView, onEdit }) {
               <th className="px-4 py-3 font-semibold">Enrollment ID</th>
               <th className="px-4 py-3 font-semibold">Case ID</th>
               <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold">Priority</th>
+              <th className="px-4 py-3 font-semibold">Urgency</th>
               <th className="px-4 py-3 font-semibold">Created At</th>
               <th className="px-4 py-3 text-right font-semibold">Actions</th>
             </tr>
@@ -1000,7 +1220,7 @@ function EnrollmentsListScreen({ onNew, onView, onEdit }) {
                     <EnrollmentStatusBadge status={row.status} />
                   </td>
                   <td className="px-4 py-3">
-                    <PriorityBadge priority={row.priority} />
+                    <UrgencyBadge urgency={row.caseUrgency} />
                   </td>
                   <td className="px-4 py-3 text-slate-500">{row.createdAt}</td>
                   <td className="px-4 py-3">
@@ -1064,7 +1284,7 @@ function TasksScreen({ onOpenCoreDeepLink, onOpenCase }) {
         </div>
         <div className="flex items-center gap-2">
           <FilterSelect label="Status" />
-          <FilterSelect label="All Priorities" />
+          <FilterSelect label="All Urgencies" />
           <FilterSelect label="All Dates" />
         </div>
       </div>
@@ -1076,7 +1296,8 @@ function TasksScreen({ onOpenCoreDeepLink, onOpenCase }) {
               <th className="px-4 py-3 font-semibold">Title</th>
               <th className="px-4 py-3 font-semibold">Type</th>
               <th className="px-4 py-3 font-semibold">Case ID</th>
-              <th className="px-4 py-3 font-semibold">Priority</th>
+              <th className="px-4 py-3 font-semibold">Patient Name</th>
+              <th className="px-4 py-3 font-semibold">Urgency</th>
               <th className="px-4 py-3 font-semibold">Status</th>
               <th className="px-4 py-3 font-semibold">Due Date</th>
               <th className="px-4 py-3 font-semibold">Created At</th>
@@ -1085,7 +1306,8 @@ function TasksScreen({ onOpenCoreDeepLink, onOpenCase }) {
           </thead>
           <tbody>
             {TASKS.map((t, idx) => {
-              const hasCase = CASE_TRACKING_ROWS.some((c) => c.caseId === t.caseId);
+              const linkedCase = CASE_TRACKING_ROWS.find((c) => c.caseId === t.caseId);
+              const hasCase = Boolean(linkedCase);
               const isPA = t.type === "pa_questions" || t.type === "pa_status";
               return (
                 <tr key={`${t.title}-${idx}`} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60">
@@ -1094,8 +1316,9 @@ function TasksScreen({ onOpenCoreDeepLink, onOpenCase }) {
                   <td className="px-4 py-3">
                     <span className="inline-block rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500">{t.caseId}</span>
                   </td>
+                  <td className="px-4 py-3 font-medium text-slate-700">{linkedCase ? linkedCase.patient : "\u2014"}</td>
                   <td className="px-4 py-3">
-                    <PriorityBadge priority={t.priority} />
+                    <UrgencyBadge urgency={t.caseUrgency} />
                   </td>
                   <td className="px-4 py-3">
                     <TaskStatusBadge status={t.status} />
@@ -1249,17 +1472,26 @@ function DataIntakeStage({ caseItem }) {
 
 function CoverageDeterminationStage({ caseItem }) {
   const passed = caseItem.eligibilityStatus === "success";
-  const style = passed ? "border-green-200 bg-green-50 text-green-600" : "border-red-200 bg-red-50 text-red-600";
+  const pending = caseItem.eligibilityStatus === "pending";
+  const style = pending
+    ? "border-slate-300 bg-slate-100 text-slate-600"
+    : passed
+    ? "border-green-200 bg-green-50 text-green-600"
+    : "border-red-200 bg-red-50 text-red-600";
   return (
     <div className="flex flex-col items-center gap-4 rounded-lg bg-slate-50 px-6 py-14 text-center">
       <span className={`flex h-14 w-14 items-center justify-center rounded-full border ${style}`}>
-        {passed ? <CheckCircle2 size={26} /> : <XCircle size={26} />}
+        {pending ? <Clock size={26} /> : passed ? <CheckCircle2 size={26} /> : <XCircle size={26} />}
       </span>
       <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-semibold ${style}`}>
-        {passed ? "Eligibility check successful - Patient has Valid Insurance" : "Eligibility check failed"}
+        {pending ? "Awaiting Questionnaire \u2014 Eligibility & Benefit Investigation in progress" : passed ? "Eligibility check successful - Patient has Valid Insurance" : `Eligibility Failed \u2014 ${caseItem.eligibilityFailureReason || "Reason not specified"}`}
       </span>
       <p className="max-w-sm text-xs text-slate-500">
-        {passed ? "This case is cleared to move forward to Benefit Investigation." : "This case cannot proceed until the eligibility issue is resolved — see Case Tracking for details."}
+        {pending
+          ? "Agadia is still running Eligibility Check and Benefit Investigation for this case. This status updates automatically once a determination is returned."
+          : passed
+          ? "This case is cleared to move forward to Benefits Investigation."
+          : "This case cannot proceed until the eligibility issue is resolved — see Case Tracking for details."}
       </p>
     </div>
   );
@@ -1270,7 +1502,7 @@ function BenefitInvestigationStage({ caseItem }) {
   const style = required ? "border-indigo-200 bg-indigo-50 text-indigo-600" : "border-slate-300 bg-slate-100 text-slate-600";
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-sm font-bold text-slate-900">Benefit Investigation</h3>
+      <h3 className="text-sm font-bold text-slate-900">Benefits Investigation</h3>
       <div className="flex flex-col items-center gap-4 rounded-lg bg-slate-50 px-6 py-14 text-center">
         <span className={`flex h-14 w-14 items-center justify-center rounded-full border ${style}`}>
           {required ? <Flag size={26} /> : <MinusCircle size={26} />}
@@ -1409,21 +1641,234 @@ function ClinicalQuestionsTab({ questions }) {
   );
 }
 
-function PAStatusTab({ status }) {
-  const style = PA_STATUS_STYLES[status] || PA_STATUS_STYLES["Case Under Plan Review"];
-  const Icon = style.icon;
+function PALetterOverlay({ status, onClose }) {
+  const letters = {
+    Approved: (
+      <>
+        <p>07/29/2026</p>
+        <p>Demo Test<br />9 campus<br />parsippany, NJ 07054</p>
+        <p><strong>RE:</strong> Approval for OZEMPIC 0.25-0.5 MG/DOSE PEN</p>
+        <p>Dear Scot Lovejoy:</p>
+        <p>Health Plan Inc. has approved OZEMPIC 0.25-0.5 MG/DOSE PEN from 07/29/2026 to 07/29/2026 as requested by Scot Lovejoy.</p>
+        <p>Health Plan Inc. will pay for this requested medication. You may be charged a copay for this medication.</p>
+        <p>Please call us if you have any questions about your benefits. Our Member Relations department is always ready to help you. You can call 24 hours a day, 7 days a week. Please call 973-540-8400.</p>
+        <p>Sincerely,</p>
+        <p>Health Plan Inc. Pharmacy Department</p>
+        <p className="mt-6 text-xs text-slate-500">cc: Scot Lovejoy<br />9 Campus Dr<br />Parsippany, NJ 07054</p>
+      </>
+    ),
+    Denied: (
+      <>
+        <p>07/29/2026</p>
+        <p><strong>RE:</strong> Demo Test (03/28/1985)</p>
+        <p>Demo Test<br />9 campus<br />parsippany, NJ 07054</p>
+        <p>Dear Scot Lovejoy</p>
+        <p>Health Plan has reviewed the request to approve the prescription for OZEMPIC 0.25-0.5 MG/DOSE PEN submitted by you on behalf of Demo Test, Health Plan number Mem1985 on 05/21/2026. After Physician review, the request is denied completely.</p>
+        <p>This decision will take effect on 07/29/2026.</p>
+        <p className="font-semibold">To continue getting services</p>
+        <p>If you have been receiving the medicine that is being reduced, changed, or denied and you file a complaint, grievance, or request for a fair hearing that is postmarked or hand-delivered within 10 days of the date on this notice, the prescription will continue until a decision is made.</p>
+        <p className="font-semibold">IF YOU DO NOT AGREE WITH THIS DECISION, YOU MAY DO ONE OR ALL OF THE FOLLOWING:</p>
+        <p>1) Request a copy of the medical necessity criteria the decision was based on by writing to the Health Plan &amp; Grievance Department, 9 Campus Drive, 2nd Floor East, Parsippany, NJ 07054.</p>
+        <p>2) File a complaint or grievance with Health Plan within 45 days of this notice by calling (973) 540-8400.</p>
+        <p>3) Request a fair hearing from the Department of Public Welfare, in writing, postmarked within 30 days of this notice.</p>
+        <p>Sincerely,</p>
+        <p>Health Plan</p>
+        <p className="mt-6 text-xs text-slate-500">cc: Scot Lovejoy<br />9 Campus Dr<br />Parsippany, NJ 07054</p>
+      </>
+    ),
+    "Partially Approved": (
+      <>
+        <p className="text-[10px] uppercase tracking-wide text-slate-400">ABCCOMM14976ABC Commercial Client — TRAINING TEAM DO NOT EDIT</p>
+        <p>07/29/2026</p>
+        <p>Demo Test<br />9 campus<br />parsippany, NJ 07054</p>
+        <p>Member ID: Mem1985</p>
+        <p><strong>RE:</strong> Approval for ACTEMRA 162 MG/0.9 ML SYRINGE</p>
+        <p>Dear Demo Test:</p>
+        <p>Health Plan, Inc. has partially approved ACTEMRA 162 MG/0.9 ML SYRINGE from 07/29/2026 to 07/29/2026 as requested by Scot Lovejoy.</p>
+        <p>Your request was partially denied for the following reasons:</p>
+        <p>Please call us if you have any questions about your benefits. Our Member Relations department is always ready to help you. You can call 24 hours a day, 7 days a week. Please call 973-540-8400.</p>
+        <p>Sincerely,</p>
+        <p>Health Plan Pharmacy Department</p>
+        <p className="mt-6 text-xs text-slate-500">cc: Scot Lovejoy<br />9 Campus Dr Suite 200<br />Parsippany, NJ 07054</p>
+      </>
+    ),
+    "Plan Needs More Information": (
+      <>
+        <p className="text-[10px] uppercase tracking-wide text-slate-400">ABCCOMM14976ABC Commercial Client — TRAINING TEAM DO NOT EDIT</p>
+        <p>07/29/2026</p>
+        <p>Demo Test<br />9 campus<br />parsippany, NJ 07054</p>
+        <p>Member ID: Mem1985</p>
+        <p><strong>RE:</strong> Additional Information Needed for ACTEMRA 162 MG/0.9 ML SYRINGE</p>
+        <p>Dear Demo Test:</p>
+        <p>Health Plan, Inc. has reviewed the request for ACTEMRA 162 MG/0.9 ML SYRINGE submitted on your behalf by Scot Lovejoy, and is unable to complete this review without additional information.</p>
+        <p>The following is needed before a determination can be made:</p>
+        <p>Please ask your prescriber to submit the requested information within 14 days of the date of this notice. If it is not received within that time, this request will be closed and a new request will need to be submitted.</p>
+        <p>Please call us if you have any questions about your benefits. Our Member Relations department is always ready to help you. You can call 24 hours a day, 7 days a week. Please call 973-540-8400.</p>
+        <p>Sincerely,</p>
+        <p>Health Plan Pharmacy Department</p>
+        <p className="mt-6 text-xs text-slate-500">cc: Scot Lovejoy<br />9 Campus Dr Suite 200<br />Parsippany, NJ 07054</p>
+      </>
+    ),
+  };
   return (
-    <div className="flex flex-col items-center gap-4 rounded-lg bg-slate-50 px-6 py-14 text-center">
-      <span className={`flex h-14 w-14 items-center justify-center rounded-full border ${style.pill}`}>
-        <Icon size={26} />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-6">
+      <div className="flex max-h-full w-full max-w-2xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3">
+          <p className="text-sm font-bold text-slate-800">Determination Letter</p>
+          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+            <X size={16} />
+          </button>
+        </div>
+        <div className="overflow-y-auto px-10 py-8 text-sm leading-relaxed text-slate-800" style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}>
+          <p className="mb-5 text-2xl font-bold text-blue-600">
+            Agadia<span className="text-amber-500">.</span>
+          </p>
+          {letters[status]}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PAStatusTab({ caseItem }) {
+  const [showLetter, setShowLetter] = useState(false);
+  const status = caseItem.paStatus;
+  const isDecided = Boolean(status);
+
+  const drugInfoHeader = caseItem.drugName && (
+    <div className="mb-4 flex items-center gap-2 rounded-lg bg-indigo-50 px-4 py-3">
+      <Pill size={15} className="text-indigo-500" />
+      <span className="text-sm font-semibold text-slate-800">{caseItem.drugName}</span>
+      <span className="text-sm text-slate-400">—</span>
+      <span className="text-sm text-slate-600">{caseItem.routeOfAdministration || "—"}</span>
+      <span className="ml-auto text-[11px] text-slate-400">Collected at enrollment</span>
+    </div>
+  );
+
+  if (!isDecided) {
+    const { label } = getCaseStatusInfo(caseItem);
+    const styleKey = label === "Awaiting Questionnaire" ? "Awaiting Questionnaire" : label === "Awaiting Response" ? "Awaiting Response" : "Case Under Plan Review";
+    const style = PA_STATUS_STYLES[styleKey] || PA_STATUS_STYLES["Case Under Plan Review"];
+    const Icon = style.icon;
+    return (
+      <>
+        {drugInfoHeader}
+        <div className="flex flex-col items-center gap-4 rounded-lg bg-slate-50 px-6 py-14 text-center">
+          <span className={`flex h-14 w-14 items-center justify-center rounded-full border ${style.pill}`}>
+            <Icon size={26} />
+          </span>
+          <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-semibold ${style.pill}`}>{label === "Cases Under Plan Review" ? "Case Under Plan Review" : label}</span>
+        </div>
+      </>
+    );
+  }
+
+  const style = PA_STATUS_STYLES[status] || PA_STATUS_STYLES["Case Under Plan Review"];
+  const fieldLabel = (label) => (
+    <span className="group relative inline-flex items-center gap-1">
+      {label}
+      <Info size={11} className="cursor-help text-slate-300 hover:text-slate-500" />
+      <span className="pointer-events-none absolute bottom-full left-0 z-10 mb-1.5 hidden min-h-[24px] w-56 rounded-md bg-slate-800 px-2.5 py-1.5 text-[11px] font-normal leading-snug text-white shadow-lg group-hover:block">
+        {PA_FIELD_DESCRIPTIONS[label] || ""}
       </span>
-      <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-semibold ${style.pill}`}>{status}</span>
+    </span>
+  );
+  const row = (label, value) => (
+    <div className="flex flex-col gap-0.5 py-2.5">
+      <span className="text-xs text-slate-400">{fieldLabel(label)}</span>
+      <span className="text-sm text-slate-800">{value ?? "—"}</span>
+    </div>
+  );
+  return (
+    <>
+      {drugInfoHeader}
+      <div className="rounded-lg border border-slate-200">
+        <div className="grid grid-cols-2 gap-x-8 divide-y divide-slate-100 px-5 [&>*:nth-child(odd)]:border-r [&>*:nth-child(odd)]:border-slate-100 [&>*:nth-child(odd)]:pr-8">
+          {row("Urgency", caseItem.urgency)}
+          {row("Estimated End Date & Time", caseItem.estimatedEndDate)}
+          {row("Date & Time Created", caseItem.dateCreated)}
+          {row("Review Submitted Date & Time", caseItem.reviewSubmittedDate)}
+          {row("Date & Time Closed", caseItem.dateClosed)}
+          <div className="flex flex-col gap-0.5 py-2.5">
+            <span className="text-xs text-slate-400">{fieldLabel("Status/Decision")}</span>
+            <button onClick={() => setShowLetter(true)} className={`text-left text-sm font-semibold underline ${style.pill.split(" ").find((c) => c.startsWith("text-"))}`}>
+              {status}
+            </button>
+          </div>
+          {row("Authorization ID", caseItem.authorizationId)}
+          {row("Authorization Start Date", caseItem.authStartDate)}
+          {row("Authorization End Date", caseItem.authEndDate)}
+          {row("Approved Quantity", caseItem.approvedQuantity)}
+          {row("Approved Days Supply", caseItem.approvedDaysSupply)}
+        </div>
+        <div className="flex items-center gap-2 border-t border-slate-100 bg-slate-50 px-5 py-3 text-xs text-slate-500">
+          <FileText size={13} />
+          Click the status above to view the determination letter the plan sent to the provider.
+        </div>
+      </div>
+      {showLetter && <PALetterOverlay status={status} onClose={() => setShowLetter(false)} />}
+    </>
+  );
+}
+
+function UploadedDocumentOverlay({ filename, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-6">
+      <div className="flex max-h-full w-full max-w-lg flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-3">
+          <p className="flex items-center gap-2 text-sm font-bold text-slate-800">
+            <FileText size={15} className="text-indigo-500" />
+            {filename}
+          </p>
+          <button onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+            <X size={16} />
+          </button>
+        </div>
+        <div className="flex flex-col items-center gap-3 overflow-y-auto bg-slate-100 px-10 py-14 text-center">
+          <div className="flex h-40 w-32 flex-col items-center justify-center gap-2 rounded-md border border-slate-300 bg-white shadow-sm">
+            <FileText size={32} className="text-slate-300" />
+            <span className="text-[10px] text-slate-400">PDF Preview</span>
+          </div>
+          <p className="text-xs text-slate-500">
+            This is a placeholder preview. In the live product, this panel renders the actual uploaded file uploaded alongside this answer.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ClinicalQuestionsReadOnly({ questions, answers, documents, status }) {
+  const [viewingDoc, setViewingDoc] = useState(null);
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-start gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs text-slate-600">
+        <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-emerald-600" />
+        These clinical questions were already answered and submitted to Agadia. This case's status is <span className="font-semibold">{status}</span> — responses are read-only.
+      </div>
+      {questions.map((q, idx) => (
+        <div key={q.id} className="rounded-md border border-slate-200 px-4 py-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">Question {idx + 1}</p>
+          <p className="mt-1 text-sm font-medium text-slate-800">{q.text}</p>
+          <p className="mt-2 rounded-md bg-slate-50 px-3 py-2 text-sm text-slate-600">{answers[idx]}</p>
+          {documents && documents[idx] && (
+            <button
+              onClick={() => setViewingDoc(documents[idx])}
+              className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:underline"
+            >
+              <FileText size={12} /> View Document
+            </button>
+          )}
+        </div>
+      ))}
+      {viewingDoc && <UploadedDocumentOverlay filename={viewingDoc} onClose={() => setViewingDoc(null)} />}
     </div>
   );
 }
 
 function PriorAuthorizationStage({ caseItem, initialSubTab }) {
   const [subTab, setSubTab] = useState(initialSubTab || "questions");
+  const isDecided = Boolean(caseItem.paStatus);
 
   if (!caseItem.paRequired) {
     return (
@@ -1453,7 +1898,17 @@ function PriorAuthorizationStage({ caseItem, initialSubTab }) {
           PA Status
         </button>
       </div>
-      <div className="pt-2">{subTab === "questions" ? <ClinicalQuestionsTab questions={PA_QUESTIONS} /> : <PAStatusTab status={caseItem.paStatus || "Case Under Plan Review"} />}</div>
+      <div className="pt-2">
+        {subTab === "questions" ? (
+          isDecided ? (
+            <ClinicalQuestionsReadOnly questions={PA_QUESTIONS} answers={PA_QUESTION_ANSWERS} documents={PA_QUESTION_DOCUMENTS} status={caseItem.paStatus} />
+          ) : (
+            <ClinicalQuestionsTab questions={PA_QUESTIONS} />
+          )
+        ) : (
+          <PAStatusTab caseItem={caseItem} />
+        )}
+      </div>
     </div>
   );
 }
@@ -1517,7 +1972,7 @@ function CorePAScreen({ caseItem, initialTab, initialStage, onBack }) {
             <p className="text-sm font-semibold text-slate-900">{caseItem.patient}</p>
             <div className="flex gap-1.5">
               <OpenStatusBadge />
-              <PriorityBadge priority={caseItem.priority || "Normal"} />
+              <UrgencyBadge urgency={caseItem.caseUrgency || "Not Urgent"} />
             </div>
             <p className="text-xs text-slate-400">{caseItem.caseId}</p>
           </div>
@@ -1720,7 +2175,7 @@ function CorePatientDetailScreen({ patient, onBack, onOpenCase }) {
                 <td className="py-3 font-medium text-emerald-700">{patient.enrolmentId}</td>
                 <td className="py-3 text-slate-500">{linkedCase?.intakeChannel || "API"}</td>
                 <td className="py-3">
-                  <EnrollmentStatusBadge status="Approved" />
+                  <EnrollmentStatusBadge status="Accepted" />
                 </td>
                 <td className="py-3 text-slate-400">No data</td>
               </tr>
@@ -1744,7 +2199,7 @@ function CorePatientDetailScreen({ patient, onBack, onOpenCase }) {
                 <th className="py-2 font-semibold">Source</th>
                 <th className="py-2 font-semibold">Status</th>
                 <th className="py-2 font-semibold">Stage</th>
-                <th className="py-2 font-semibold">Priority</th>
+                <th className="py-2 font-semibold">Urgency</th>
                 <th className="py-2 font-semibold">Opened</th>
                 <th className="py-2 text-right font-semibold">Actions</th>
               </tr>
@@ -1756,9 +2211,9 @@ function CorePatientDetailScreen({ patient, onBack, onOpenCase }) {
                 <td className="py-3">
                   <OpenStatusBadge />
                 </td>
-                <td className="py-3 text-slate-500">{linkedCase.stage === "—" ? "—" : linkedCase.stage}</td>
+                <td className="py-3 text-slate-500">{CORE_STAGE_LABELS[getCoreStageIndex(linkedCase)]}</td>
                 <td className="py-3">
-                  <PriorityBadge priority={linkedCase.priority} />
+                  <UrgencyBadge urgency={linkedCase.caseUrgency} />
                 </td>
                 <td className="py-3 text-slate-500">{linkedCase.enrollmentDate.split(" ").slice(0, 3).join(" ")}</td>
                 <td className="py-3 text-right">
@@ -1790,7 +2245,7 @@ function CoreCasesScreen({ onView }) {
             <tr className="border-b border-slate-100 bg-slate-50 text-left text-[11px] uppercase tracking-wide text-slate-400">
               <th className="px-4 py-3 font-semibold">Patient</th>
               <th className="px-4 py-3 font-semibold">Case ID</th>
-              <th className="px-4 py-3 font-semibold">Priority</th>
+              <th className="px-4 py-3 font-semibold">Urgency</th>
               <th className="px-4 py-3 text-right font-semibold">Actions</th>
             </tr>
           </thead>
@@ -1807,7 +2262,7 @@ function CoreCasesScreen({ onView }) {
                   <span className="inline-block rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500">{row.caseId}</span>
                 </td>
                 <td className="px-4 py-3">
-                  <PriorityBadge priority={row.priority} />
+                  <UrgencyBadge urgency={row.caseUrgency} />
                 </td>
                 <td className="px-4 py-3 text-right">
                   <button onClick={() => onView(row)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-blue-50 hover:text-blue-600">
@@ -1823,7 +2278,7 @@ function CoreCasesScreen({ onView }) {
   );
 }
 
-function CorePortalShell({ children, activeNavLabel, onNavClick, onBackToHome, onBackToPartner, onLogout, userEmail, userName }) {
+function CorePortalShell({ children, activeNavLabel, onNavClick, navItems, backLabel, onBack, onBackToPartner, onLogout, userEmail, userName }) {
   return (
     <div className="min-h-screen w-full bg-[#F8F9FB] font-sans text-slate-900">
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-3.5">
@@ -1835,6 +2290,9 @@ function CorePortalShell({ children, activeNavLabel, onNavClick, onBackToHome, o
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <button onClick={onBack} className="flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-blue-600">
+            <ChevronLeft size={13} /> {backLabel}
+          </button>
           <button onClick={onBackToPartner} className="flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-indigo-600">
             <ChevronLeft size={13} /> Partner ABC
           </button>
@@ -1854,19 +2312,15 @@ function CorePortalShell({ children, activeNavLabel, onNavClick, onBackToHome, o
         </div>
       </header>
 
-
       <div className="flex">
         <nav className="flex w-52 flex-col gap-1 border-r border-slate-200 bg-white p-3">
-          {CORE_NAV_ITEMS.map((label) => {
-            const isEnrollmentLink = label === "Enrollment Portal";
+          {(navItems || CORE_NAV_ITEMS).map((label) => {
             const isActive = label === activeNavLabel;
             return (
               <button
                 key={label}
-                onClick={() => (isEnrollmentLink ? onBackToHome() : onNavClick(label))}
-                className={`rounded-lg px-3 py-2.5 text-left text-sm transition ${
-                  isActive ? "bg-blue-50 font-medium text-blue-600" : "text-slate-500 hover:bg-slate-50"
-                } ${isEnrollmentLink ? "mt-2 border-t border-slate-100 pt-3.5" : ""}`}
+                onClick={() => onNavClick(label)}
+                className={`rounded-lg px-3 py-2.5 text-left text-sm transition ${isActive ? "bg-blue-50 font-medium text-blue-600" : "text-slate-500 hover:bg-slate-50"}`}
               >
                 {label}
               </button>
@@ -1885,7 +2339,7 @@ function CaseTrackingScreen({ onView }) {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Case Tracking</h1>
-          <p className="mt-1 text-sm text-slate-500">Monitor and manage patient cases across all active programmes.</p>
+          <p className="mt-1 text-sm text-slate-500">Monitor and manage all active patient cases.</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-xs text-slate-400">
@@ -1905,7 +2359,7 @@ function CaseTrackingScreen({ onView }) {
               <th className="px-4 py-3 font-semibold">Case ID</th>
               <th className="px-4 py-3 font-semibold">Stage</th>
               <th className="px-4 py-3 font-semibold">Status</th>
-              <th className="px-4 py-3 font-semibold">Priority</th>
+              <th className="px-4 py-3 font-semibold">Urgency</th>
               <th className="px-4 py-3 font-semibold">SLA Due</th>
               <th className="px-4 py-3 font-semibold">Enrollment Date</th>
               <th className="px-4 py-3 text-right font-semibold">Actions</th>
@@ -1923,12 +2377,12 @@ function CaseTrackingScreen({ onView }) {
                 <td className="px-4 py-3">
                   <span className="inline-block rounded-md border border-slate-200 px-2 py-1 text-xs font-medium text-slate-500">{row.caseId}</span>
                 </td>
-                <td className="px-4 py-3 text-slate-500">{row.stage}</td>
+                <td className="px-4 py-3 text-slate-500">{CORE_STAGE_LABELS[getCoreStageIndex(row)]}</td>
                 <td className="px-4 py-3">
                   <CaseStatusBadge caseItem={row} />
                 </td>
                 <td className="px-4 py-3">
-                  <PriorityBadge priority={row.priority} />
+                  <UrgencyBadge urgency={row.caseUrgency} />
                 </td>
                 <td className="px-4 py-3">
                   <SlaCell date={row.slaDue} overdue={row.overdue} />
@@ -1979,22 +2433,7 @@ function InfoField({ icon: Icon, label, children }) {
   );
 }
 
-function ModuleCard({ icon: Icon, label, value, valueClass, statusIcon: StatusIcon }) {
-  return (
-    <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3.5">
-      <div className="flex items-center gap-3">
-        <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white">
-          <Icon size={15} className="text-slate-500" />
-        </span>
-        <div>
-          <p className="text-[11px] uppercase tracking-wide text-slate-400">{label}</p>
-          <p className={`text-sm font-semibold ${valueClass}`}>{value}</p>
-        </div>
-      </div>
-      {StatusIcon && <StatusIcon size={16} className="text-slate-300" />}
-    </div>
-  );
-}
+
 
 function CaseDetailScreen({ caseItem, onBack, onUpdateCase }) {
   const activeStageIndex = getCoreStageIndex(caseItem);
@@ -2010,9 +2449,11 @@ function CaseDetailScreen({ caseItem, onBack, onUpdateCase }) {
             <p className="mt-1 text-sm text-slate-500">View case details, stage progress, and associated patient information.</p>
           </div>
         </div>
-        <button onClick={onUpdateCase} className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
-          <Pencil size={14} /> Update Case
-        </button>
+        {caseItem.eligibilityStatus === "failed" && (
+          <button onClick={onUpdateCase} className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+            <Pencil size={14} /> Update Case
+          </button>
+        )}
       </div>
 
       <Card className="px-6 py-6">
@@ -2034,14 +2475,13 @@ function CaseDetailScreen({ caseItem, onBack, onUpdateCase }) {
         <div className="grid grid-cols-4 gap-y-6">
           <InfoField icon={FileText} label="Case Number">{caseItem.caseId}</InfoField>
           <InfoField icon={Users} label="Patient">{caseItem.patient}</InfoField>
-          <InfoField icon={ClipboardList} label="Programme">{caseItem.programme || "Botox drug program"}</InfoField>
           <InfoField icon={ShieldAlert} label="Status">
-            <CaseStatusBadge caseItem={caseItem} />
+            <CaseStatusBadge caseItem={caseItem} showReason />
           </InfoField>
 
-          <InfoField icon={Flag} label="Workflow Stage">{caseItem.stage === "—" ? "—" : caseItem.stage}</InfoField>
-          <InfoField icon={Flag} label="Priority">
-            <PriorityBadge priority={caseItem.priority} />
+          <InfoField icon={Flag} label="Workflow Stage">{CORE_STAGE_LABELS[getCoreStageIndex(caseItem)]}</InfoField>
+          <InfoField icon={Flag} label="Urgency">
+            <UrgencyBadge urgency={caseItem.caseUrgency} />
           </InfoField>
           <InfoField icon={Clock} label="SLA Status">
             {caseItem.overdue ? <span className="text-red-500">Overdue</span> : <span className="text-green-600">On Track</span>}
@@ -2049,22 +2489,8 @@ function CaseDetailScreen({ caseItem, onBack, onUpdateCase }) {
           <InfoField icon={Clock} label="SLA Due">{caseItem.slaDue} 4:46 PM</InfoField>
 
           <InfoField icon={Clock} label="Enrollment Date">{caseItem.enrollmentDate}</InfoField>
-          <InfoField icon={Activity} label="Therapy Start">—</InfoField>
           <InfoField icon={Clock} label="Created">{caseItem.enrollmentDate}</InfoField>
           <InfoField icon={Clock} label="Last Updated">Jun 28, 2026 4:47 PM</InfoField>
-        </div>
-      </Card>
-
-      <Card className="p-5">
-        <div className="mb-4 flex items-center gap-2">
-          <span className="h-4 w-1 rounded-full bg-indigo-600" />
-          <h2 className="text-sm font-bold text-slate-900">Active Modules</h2>
-        </div>
-        <div className="grid grid-cols-4 gap-4">
-          <ModuleCard icon={Clock} label="Open Tasks" value="Open" valueClass="text-orange-500" />
-          <ModuleCard icon={FileText} label="Benefits Investigation" value="Inactive" valueClass="text-slate-500" statusIcon={MinusCircle} />
-          <ModuleCard icon={Flag} label="Prior Authorization" value="Inactive" valueClass="text-slate-500" statusIcon={MinusCircle} />
-          <ModuleCard icon={AlertTriangle} label="Active Appeal" value="None" valueClass="text-slate-500" statusIcon={MinusCircle} />
         </div>
       </Card>
     </div>
@@ -2310,7 +2736,305 @@ function AccessDeniedScreen({ email, onBack }) {
   );
 }
 
-function AnvayaRxApp({ userEmail, userName, onBackToPartner, onLogout }) {
+// ---------------------------------------------------------------------------
+// Core, entered directly from the module selector (not via a Task deep-link).
+// Has its own Cases/Patients browsing state and a "‹ Modules" back button,
+// alongside the persistent "‹ Partner ABC" / Logout exit.
+// ---------------------------------------------------------------------------
+
+const USER_ROLE_OPTIONS = ["All Portal Admin", "Enrollment Admin", "All Portal User", "Enrollment User"];
+
+const PARTNER_ENROLLMENT_USERS = [
+  { id: "abc-u1", name: "Testuser One", role: "All Portal Admin", email: "muskan3011kumari@gmail.com", status: "Active", invited: "Jul 8, 2026" },
+  { id: "abc-u2", name: "Aa Aa", role: "Enrollment Admin", email: "sb6qnxmmir@ozsaip.com", status: "Active", invited: "Jun 27, 2026" },
+  { id: "abc-u3", name: "Aa Aa", role: "All Portal User", email: "sb6qnxmmir@ozsaip.com", status: "Active", invited: "Jun 27, 2026" },
+  { id: "abc-u4", name: "Test Test", role: "Enrollment User", email: "bokog59490@adsprite.com", status: "Active", invited: "Jun 24, 2026" },
+  { id: "abc-u5", name: "Emma Mark", role: "Enrollment Admin", email: "john.anderson_55@yopmail.com", status: "Active", invited: "Jun 23, 2026" },
+  { id: "abc-u6", name: "Mas Mas", role: "Enrollment User", email: "mas@d.com", status: "Active", invited: "Jun 21, 2026" },
+  { id: "abc-u7", name: "Pqr Test", role: "All Portal Admin", email: "pqr@yopmail.com", status: "Active", invited: "Jun 15, 2026" },
+  { id: "abc-u8", name: "Jay Bafna", role: "All Portal User", email: "jaybafna@yopmail.com", status: "Active", invited: "Jun 14, 2026" },
+  { id: "abc-u9", name: "Abc", role: "Enrollment Admin", email: "abc@yopmail.com", status: "Active", invited: "Jun 10, 2026" },
+  { id: "abc-u10", name: "Xyz Test", role: "All Portal Admin", email: "xyz@yopmail.com", status: "Active", invited: "Jun 10, 2026" },
+];
+
+// Only reachable at all once AnvayaRx Admin has enabled self-service user
+// management for this Partner (PARTNER_USER_MANAGEMENT_ENABLED above) --
+// otherwise Core's nav never offers a Users tab in the first place. Once
+// enabled, this is the same screen, same Invite User flow, and same data
+// the AnvayaRx Admin already manages on this Partner's behalf (Section 4.2.2)
+// -- the Partner is now doing it themselves instead.
+function PartnerUsersScreen() {
+  const [users, setUsers] = useState(PARTNER_ENROLLMENT_USERS);
+  const [showInvite, setShowInvite] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("Enrollment User");
+  const [editingId, setEditingId] = useState(null);
+  const [editingRole, setEditingRole] = useState("Enrollment User");
+
+  const handleSendInvite = () => {
+    if (!inviteEmail.trim()) return;
+    const name = inviteEmail.split("@")[0].replace(/[._]/g, " ");
+    setUsers((prev) => [
+      { id: `u-${Date.now()}`, name: name.charAt(0).toUpperCase() + name.slice(1), role: inviteRole, email: inviteEmail.trim(), status: "Invited", invited: "Just now" },
+      ...prev,
+    ]);
+    setInviteEmail("");
+    setInviteRole("Enrollment User");
+    setShowInvite(false);
+  };
+
+  const startEdit = (user) => {
+    setEditingId(user.id);
+    setEditingRole(user.role);
+  };
+
+  const saveEdit = (id) => {
+    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role: editingRole } : u)));
+    setEditingId(null);
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">Users</h1>
+          <p className="mt-1 text-sm text-slate-500">Manage user accounts and their access across the application, by assigning each one a role.</p>
+        </div>
+        <button
+          onClick={() => setShowInvite((s) => !s)}
+          className="flex items-center gap-1.5 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+        >
+          <UserPlus size={15} /> Invite User
+        </button>
+      </div>
+
+      {showInvite && (
+        <Card className="flex flex-wrap items-end gap-3 p-4">
+          <div className="flex-1 min-w-[220px]">
+            <label className="mb-1.5 block text-xs font-medium text-slate-600">Email address</label>
+            <input
+              value={inviteEmail}
+              onChange={(e) => setInviteEmail(e.target.value)}
+              placeholder="name@example.com"
+              className="w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none"
+            />
+          </div>
+          <div className="w-48">
+            <label className="mb-1.5 block text-xs font-medium text-slate-600">Role</label>
+            <select
+              value={inviteRole}
+              onChange={(e) => setInviteRole(e.target.value)}
+              className="w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none"
+            >
+              {USER_ROLE_OPTIONS.map((r) => (
+                <option key={r}>{r}</option>
+              ))}
+            </select>
+          </div>
+          <button onClick={handleSendInvite} className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+            Send Invite
+          </button>
+          <button onClick={() => setShowInvite(false)} className="rounded-md border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">
+            Cancel
+          </button>
+        </Card>
+      )}
+
+      <Card className="overflow-hidden p-0">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-slate-100 bg-slate-50 text-left text-[11px] uppercase tracking-wide text-slate-400">
+              <th className="px-4 py-3 font-semibold">User</th>
+              <th className="px-4 py-3 font-semibold">Role</th>
+              <th className="px-4 py-3 font-semibold">Email</th>
+              <th className="px-4 py-3 font-semibold">Status</th>
+              <th className="px-4 py-3 font-semibold">Invited</th>
+              <th className="px-4 py-3 text-right font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((u, idx) => (
+              <tr key={u.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/60">
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2.5">
+                    <PatientAvatar name={u.name} colorClass={AVATAR_COLORS[idx % AVATAR_COLORS.length]} />
+                    <span className="font-medium text-slate-800">{u.name}</span>
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  {editingId === u.id ? (
+                    <select
+                      value={editingRole}
+                      onChange={(e) => setEditingRole(e.target.value)}
+                      className="rounded-md border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:border-indigo-400 focus:outline-none"
+                    >
+                      {USER_ROLE_OPTIONS.map((r) => (
+                        <option key={r}>{r}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <span className="rounded-full border border-slate-200 px-2.5 py-1 text-xs text-slate-600">{u.role}</span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-slate-500">{u.email}</td>
+                <td className="px-4 py-3">
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-semibold text-emerald-700">{u.status}</span>
+                </td>
+                <td className="px-4 py-3 text-slate-500">{u.invited}</td>
+                <td className="px-4 py-3 text-right">
+                  {editingId === u.id ? (
+                    <button onClick={() => saveEdit(u.id)} className="rounded-md bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700">
+                      Save
+                    </button>
+                  ) : (
+                    <button onClick={() => startEdit(u)} className="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-amber-50 hover:text-amber-600">
+                      <Pencil size={14} />
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
+}
+
+function CoreModuleApp({ userEmail, userName, onGoToModules, onBackToPartner, onLogout }) {
+  const [coreState, setCoreState] = useState({ screen: "cases" });
+
+  const navLabelForScreen = { cases: "Cases", "case-detail": "Cases", patients: "Patients", "patient-detail": "Patients", users: "Users" };
+  const screenKeyForLabel = { Cases: "cases", Patients: "patients", Users: "users" };
+
+  let coreContent;
+  if (coreState.screen === "users") {
+    coreContent = <PartnerUsersScreen />;
+  } else if (coreState.screen === "patients") {
+    coreContent = <CorePatientsScreen onView={(p) => setCoreState({ screen: "patient-detail", mrn: p.mrn })} />;
+  } else if (coreState.screen === "patient-detail") {
+    const patient = PATIENTS.find((p) => p.mrn === coreState.mrn);
+    coreContent = (
+      <CorePatientDetailScreen
+        patient={patient}
+        onBack={() => setCoreState({ screen: "patients" })}
+        onOpenCase={(caseId) => setCoreState({ screen: "case-detail", caseId })}
+      />
+    );
+  } else if (coreState.screen === "cases") {
+    coreContent = <CoreCasesScreen onView={(c) => setCoreState({ screen: "case-detail", caseId: c.caseId })} />;
+  } else {
+    const linkedCase = CASE_TRACKING_ROWS.find((c) => c.caseId === coreState.caseId) || { caseId: coreState.caseId, patient: "Unknown Patient", caseUrgency: "Not Urgent" };
+    coreContent = (
+      <CorePAScreen caseItem={linkedCase} initialTab={coreState.tab} initialStage={coreState.tab ? 3 : 0} onBack={() => setCoreState({ screen: "cases" })} />
+    );
+  }
+
+  return (
+    <CorePortalShell
+      activeNavLabel={navLabelForScreen[coreState.screen]}
+      onNavClick={(label) => setCoreState({ screen: screenKeyForLabel[label] || "cases" })}
+      backLabel="Modules"
+      onBack={onGoToModules}
+      onBackToPartner={onBackToPartner}
+      onLogout={onLogout}
+      userEmail={userEmail}
+      userName={userName}
+    >
+      {coreContent}
+    </CorePortalShell>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Module selector — the home screen once inside AnvayaRx. Partner users only
+// ever see 2 modules (Enrollment Portal, Core) — Govern is Admin-only, not
+// shown here at all.
+// ---------------------------------------------------------------------------
+
+const PARTNER_MODULE_TILES = [
+  {
+    key: "enrollment-portal",
+    name: "Enrollment Portal",
+    category: "PARTNER-FACING PORTAL",
+    accent: "border-t-purple-500",
+    icon: UserPlus,
+    description: "Submit patient enrollments, track case status, and manage intake workflows.",
+  },
+  {
+    key: "core",
+    name: "AnvayaRx Core",
+    category: "HUB OPERATIONS",
+    accent: "border-t-blue-500",
+    icon: Layers,
+    description: "The operational backbone of the hub ecosystem — coverage, authorization, and fulfillment for every case.",
+  },
+];
+
+function ModuleSelectorScreen({ userEmail, userName, onSelect, onBackToPartner, onLogout }) {
+  return (
+    <div className="min-h-screen w-full bg-white">
+      <header className="flex items-center justify-between border-b border-slate-200 px-6 py-3">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600">
+            <Layers size={16} className="text-white" />
+          </div>
+          <p className="text-base font-bold text-slate-800">
+            Anvaya<span className="text-emerald-600">Rx</span>
+          </p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 rounded-md border border-slate-200 px-3 py-1.5 text-xs text-slate-400">
+            <Search size={13} />
+            <span>Search workspaces...</span>
+          </div>
+          <button onClick={onBackToPartner} title="Back to Partner ABC" className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+            <ChevronLeft size={15} />
+          </button>
+          <button onClick={onLogout} title="Log out" className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100">
+            <LogOut size={15} />
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-600 text-xs font-semibold text-white">
+              {(userName || "A").charAt(0).toUpperCase()}
+            </span>
+            <div>
+              <p className="text-xs font-medium leading-tight text-slate-800">{userName}</p>
+              <p className="text-[10px] leading-tight text-slate-400">{userEmail}</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-4xl px-6 py-10">
+        <div className="grid grid-cols-2 gap-5">
+          {PARTNER_MODULE_TILES.map((m) => {
+            const Icon = m.icon;
+            return (
+              <div key={m.key} className={`flex flex-col justify-between rounded-lg border border-t-4 border-slate-200 bg-white ${m.accent} p-5 shadow-sm`}>
+                <div>
+                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-lg bg-slate-100">
+                    <Icon size={18} className="text-slate-600" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-900">{m.name}</p>
+                  <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">{m.category}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-500">{m.description}</p>
+                </div>
+                <button onClick={() => onSelect(m.key)} className="mt-4 flex items-center gap-1 self-start text-xs font-semibold text-indigo-600 hover:underline">
+                  Launch Portal <ArrowRight size={12} />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </main>
+
+      <div className="border-t border-slate-100 py-4 text-center text-[11px] text-slate-400">POWERED BY Agadia</div>
+    </div>
+  );
+}
+
+function AnvayaRxApp({ userEmail, userName, onGoToModules, onBackToPartner, onLogout }) {
   const [active, setActive] = useState("dashboard");
   const [selectedCase, setSelectedCase] = useState(null);
   const [enrollmentMode, setEnrollmentMode] = useState(null); // null | "create" | "update" | "view"
@@ -2322,11 +3046,6 @@ function AnvayaRxApp({ userEmail, userName, onBackToPartner, onLogout }) {
   const activeLabel = NAV_ITEMS.find((n) => n.key === active)?.label || "";
 
   const handleNavClick = (key) => {
-    if (key === "core") {
-      setActive("core");
-      setCoreState({ screen: "cases" });
-      return;
-    }
     setActive(key);
     setSelectedCase(null);
     setEnrollmentMode(null);
@@ -2341,14 +3060,14 @@ function AnvayaRxApp({ userEmail, userName, onBackToPartner, onLogout }) {
 
   const handleViewEnrollment = (enrollmentRow) => {
     const linkedCase = CASE_TRACKING_ROWS.find((c) => c.caseId === enrollmentRow.caseId);
-    setEnrollmentCase(linkedCase || { patient: enrollmentRow.patient, caseId: enrollmentRow.caseId, priority: enrollmentRow.priority });
+    setEnrollmentCase(linkedCase || { patient: enrollmentRow.patient, caseId: enrollmentRow.caseId, caseUrgency: enrollmentRow.caseUrgency });
     setViewingEnrollmentId(enrollmentRow.enrollmentId);
     setEnrollmentMode("view");
   };
 
   const handleEditEnrollment = (enrollmentRow) => {
     const linkedCase = CASE_TRACKING_ROWS.find((c) => c.caseId === enrollmentRow.caseId);
-    setEnrollmentCase(linkedCase || { patient: enrollmentRow.patient, caseId: enrollmentRow.caseId, priority: enrollmentRow.priority });
+    setEnrollmentCase(linkedCase || { patient: enrollmentRow.patient, caseId: enrollmentRow.caseId, caseUrgency: enrollmentRow.caseUrgency });
     setViewingEnrollmentId(enrollmentRow.enrollmentId);
     setEnrollmentMode("edit");
   };
@@ -2439,8 +3158,8 @@ function AnvayaRxApp({ userEmail, userName, onBackToPartner, onLogout }) {
   }
 
   if (coreState) {
-    const navLabelForScreen = { patients: "Patients", "patient-detail": "Patients", cases: "Cases", "case-detail": "Cases" };
-    const screenKeyForLabel = { Patients: "patients", Cases: "cases" };
+    const navLabelForScreen = { cases: "Cases", "case-detail": "Cases", patients: "Patients", "patient-detail": "Patients" };
+    const screenKeyForLabel = { Cases: "cases", Patients: "patients" };
 
     let coreContent;
     if (coreState.screen === "patients") {
@@ -2457,7 +3176,7 @@ function AnvayaRxApp({ userEmail, userName, onBackToPartner, onLogout }) {
     } else if (coreState.screen === "cases") {
       coreContent = <CoreCasesScreen onView={(c) => setCoreState({ screen: "case-detail", caseId: c.caseId })} />;
     } else {
-      const linkedCase = CASE_TRACKING_ROWS.find((c) => c.caseId === coreState.caseId) || { caseId: coreState.caseId, patient: "Unknown Patient", priority: "Normal" };
+      const linkedCase = CASE_TRACKING_ROWS.find((c) => c.caseId === coreState.caseId) || { caseId: coreState.caseId, patient: "Unknown Patient", caseUrgency: "Not Urgent" };
       coreContent = (
         <CorePAScreen
           caseItem={linkedCase}
@@ -2472,10 +3191,9 @@ function AnvayaRxApp({ userEmail, userName, onBackToPartner, onLogout }) {
       <CorePortalShell
         activeNavLabel={navLabelForScreen[coreState.screen]}
         onNavClick={(label) => setCoreState({ screen: screenKeyForLabel[label] || "cases" })}
-        onBackToHome={() => {
-          setCoreState(null);
-          setActive("dashboard");
-        }}
+        navItems={["Cases", "Patients"]}
+        backLabel="Enrollment Portal"
+        onBack={() => setCoreState(null)}
         onBackToPartner={onBackToPartner}
         onLogout={onLogout}
         userEmail={userEmail}
@@ -2497,6 +3215,9 @@ function AnvayaRxApp({ userEmail, userName, onBackToPartner, onLogout }) {
           </div>
         </div>
         <div className="flex items-center gap-4">
+          <button onClick={onGoToModules} className="flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-indigo-600">
+            <ChevronLeft size={13} /> Modules
+          </button>
           <button onClick={onBackToPartner} className="flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-indigo-600">
             <ChevronLeft size={13} /> Partner ABC
           </button>
@@ -2549,7 +3270,7 @@ function AnvayaRxApp({ userEmail, userName, onBackToPartner, onLogout }) {
 // ---------------------------------------------------------------------------
 
 export default function PartnerSSODemo() {
-  // "partner-login" | "partner-dashboard" | "sso-mediator" | "access-denied" | "anvayarx"
+  // "partner-login" | "partner-dashboard" | "sso-mediator" | "access-denied" | "modules" | "enrollment-portal" | "core"
   const [stage, setStage] = useState("partner-login");
   const [currentEmail, setCurrentEmail] = useState("");
 
@@ -2573,7 +3294,7 @@ export default function PartnerSSODemo() {
       <SSOMediatorScreen
         onComplete={() => {
           const account = PARTNER_ACCOUNTS[currentEmail];
-          setStage(account?.hasAnvayaRxAccess ? "anvayarx" : "access-denied");
+          setStage(account?.hasAnvayaRxAccess ? "modules" : "access-denied");
         }}
       />
     );
@@ -2584,15 +3305,38 @@ export default function PartnerSSODemo() {
   }
 
   const account = PARTNER_ACCOUNTS[currentEmail];
+  const userEmail = currentEmail;
+  const userName = account?.displayName || currentEmail;
+  const goToModules = () => setStage("modules");
+  const backToPartner = () => setStage("partner-dashboard");
+  const logout = () => {
+    setCurrentEmail("");
+    setStage("partner-login");
+  };
+
+  if (stage === "modules") {
+    return (
+      <ModuleSelectorScreen
+        userEmail={userEmail}
+        userName={userName}
+        onSelect={(key) => setStage(key)}
+        onBackToPartner={backToPartner}
+        onLogout={logout}
+      />
+    );
+  }
+
+  if (stage === "core") {
+    return <CoreModuleApp userEmail={userEmail} userName={userName} onGoToModules={goToModules} onBackToPartner={backToPartner} onLogout={logout} />;
+  }
+
   return (
     <AnvayaRxApp
-      userEmail={currentEmail}
-      userName={account?.displayName || currentEmail}
-      onBackToPartner={() => setStage("partner-dashboard")}
-      onLogout={() => {
-        setCurrentEmail("");
-        setStage("partner-login");
-      }}
+      userEmail={userEmail}
+      userName={userName}
+      onGoToModules={goToModules}
+      onBackToPartner={backToPartner}
+      onLogout={logout}
     />
   );
 }
